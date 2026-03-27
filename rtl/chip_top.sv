@@ -1,8 +1,9 @@
 module chip_top #(
-    parameter IR_WIDTH = 4,
-    parameter DR_WIDTH = 32,
-    parameter BISR_WIDTH = 8,
-    parameter IDCODE   = 32'h1234ABCD
+    parameter IR_WIDTH    = 4,
+    parameter DR_WIDTH    = 32,
+    parameter BISR_WIDTH  = 8,
+    parameter MBIST_WIDTH = 16,
+    parameter IDCODE      = 32'h1234ABCD
 )(
     input  logic TCK,
     input  logic TMS,
@@ -35,13 +36,13 @@ module chip_top #(
     );
 
     // --------------------------------------------------------------------
-    // SIB (Serial Instrument Bus) for BISR
+    // SIB for BISR
     // --------------------------------------------------------------------
     logic bisr_tdo;
     logic sib_enable;
 
     // Enable BISR only when USER_DR instruction is selected
-    assign sib_enable = (ir_out == 4'b0010);  
+    assign sib_enable = (ir_out == 4'b0010);
 
     sib #(
         .WIDTH(BISR_WIDTH)
@@ -49,22 +50,36 @@ module chip_top #(
         .tck(TCK),
         .trst_n(TRST),
         .sib_enable(sib_enable),
-        .tdi_in(tap_tdo),          // TAP drives SIB input
+        .tdi_in(tap_tdo),
         .tdo_out(bisr_tdo),
-        .instr_data_in(),           // optional initial value
-        .instr_data_out()           // optional observation
+        .instr_data_in(),   // optional initial value
+        .instr_data_out()   // optional observation
     );
 
     // --------------------------------------------------------------------
     // BISR instrument
     // --------------------------------------------------------------------
+    logic bisr_out;
+
     bisr #(
         .DATA_WIDTH(BISR_WIDTH)
     ) bisr0 (
         .tck(TCK),
         .trst_n(TRST),
-        .tdi(bisr_tdo),  // SIB output drives BISR input
-        .tdo(TDO)        // BISR output is chip TDO
+        .tdi(bisr_tdo),
+        .tdo(bisr_out)
+    );
+
+    // --------------------------------------------------------------------
+    // Dummy MBIST module
+    // --------------------------------------------------------------------
+    dummy_mbist #(
+        .WIDTH(MBIST_WIDTH)
+    ) mbist0 (
+        .tck(TCK),
+        .trst_n(TRST),
+        .tdi_in(bisr_out),
+        .tdo_out(TDO)
     );
 
 endmodule
