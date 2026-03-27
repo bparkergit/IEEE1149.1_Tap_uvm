@@ -1,69 +1,70 @@
-module chip_top (
-    input  logic tck,
-    input  logic tms,
-    input  logic tdi,
-    input  logic trst_n,
-    output logic tdo
+module chip_top #(
+    parameter IR_WIDTH = 4,
+    parameter DR_WIDTH = 32,
+    parameter BISR_WIDTH = 8,
+    parameter IDCODE   = 32'h1234ABCD
+)(
+    input  logic TCK,
+    input  logic TMS,
+    input  logic TRST,
+    input  logic TDI,
+    output logic TDO
 );
 
     // --------------------------------------------------------------------
     // TAP controller instance
     // --------------------------------------------------------------------
-    logic [31:0] ir;      // Instruction register (optional)
-    logic [31:0] dr;      // Data register (for Shift-DR)
+    logic [IR_WIDTH-1:0] ir_out;
+    logic [DR_WIDTH-1:0] dr_out;
+    logic bypass_enable;
     logic tap_tdo;
 
-    tap_controller tap0 (
-        .tck    (tck),
-        .tms    (tms),
-        .tdi    (tdi),
-        .trst_n (trst_n),
-        .tdo    (tap_tdo),
-        .ir_out (ir),
-        .dr_out (dr)
+    tap_controller #(
+        .IR_WIDTH(IR_WIDTH),
+        .DR_WIDTH(DR_WIDTH),
+        .IDCODE(IDCODE)
+    ) tap0 (
+        .TCK(TCK),
+        .TMS(TMS),
+        .TRST(TRST),
+        .TDI(TDI),
+        .TDO(tap_tdo),
+        .ir_out(ir_out),
+        .dr_out(dr_out),
+        .bypass_enable(bypass_enable)
     );
 
     // --------------------------------------------------------------------
-    // IJTAG Control Register (for SIB enable)
+    // SIB (Serial Instrument Bus) for BISR
     // --------------------------------------------------------------------
+    logic bisr_tdo;
     logic sib_enable;
 
-    ijtag_ctrl_reg ctrl0 (
-        .tck        (tck),
-        .trst_n     (trst_n),
-        .tdi_in     (tap_tdo),      // TAP shifts control bits first
-        .sib_enable (sib_enable),
-        .tdo_out    (tdo)           // TDO after control (SIB) optional
-    );
-
-    // --------------------------------------------------------------------
-    // SIB for BISR
-    // --------------------------------------------------------------------
-    logic bisr_tdi, bisr_tdo;
+    // Enable BISR only when USER_DR instruction is selected
+    assign sib_enable = (ir_out == 4'b0010);  
 
     sib #(
-        .WIDTH(8)   // Width of BISR shift register
+        .WIDTH(BISR_WIDTH)
     ) sib_bisr (
-        .tck        (tck),
-        .trst_n     (trst_n),
-        .sib_enable (sib_enable),
-        .tdi_in     (tap_tdo),      // comes from TAP/ctrl chain
-        .tdo_out    (bisr_tdo),
-        .instr_data_in(),            // optional initial value
-        .instr_data_out()            // optional observation
+        .tck(TCK),
+        .trst_n(TRST),
+        .sib_enable(sib_enable),
+        .tdi_in(tap_tdo),          // TAP drives SIB input
+        .tdo_out(bisr_tdo),
+        .instr_data_in(),           // optional initial value
+        .instr_data_out()           // optional observation
     );
 
     // --------------------------------------------------------------------
     // BISR instrument
     // --------------------------------------------------------------------
     bisr #(
-        .DATA_WIDTH(8)
+        .DATA_WIDTH(BISR_WIDTH)
     ) bisr0 (
-        .tck        (tck),
-        .trst_n     (trst_n),
-        .tdi        (bisr_tdi),
-        .tdo        (bisr_tdo)
-        // optional: memory interface if you want to simulate repair
+        .tck(TCK),
+        .trst_n(TRST),
+        .tdi(bisr_tdo),  // SIB output drives BISR input
+        .tdo(TDO)        // BISR output is chip TDO
     );
 
 endmodule
