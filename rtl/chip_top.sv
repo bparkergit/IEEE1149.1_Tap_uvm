@@ -2,7 +2,7 @@ module chip_top #(
     parameter IR_WIDTH          = 4,
     parameter BISR_WIDTH        = 8,     // width of BISR data
     parameter MBIST_WIDTH       = 16,    // MBIST width
-    parameter INSTR_SHIFT_WIDTH = 32,    // max width for IJTAG bus
+    parameter INSTR_SHIFT_WIDTH = 32,    // max width for instrument bus shift register
     parameter IDCODE            = 32'h1234ABCD
 )(
     input  logic TCK,
@@ -36,7 +36,7 @@ module chip_top #(
     // ---------------------------
     // IJTAG / Instrument Bus
     // ---------------------------
-    logic [1:0][INSTR_SHIFT_WIDTH-1:0] instr_shift;
+    logic [1:0][INSTR_SHIFT_WIDTH-1:0] instrument_shift_reg;
     logic ijtag_tdo;
 
     ijtag_bus #(
@@ -46,7 +46,8 @@ module chip_top #(
         .tck(TCK),
         .trst_n(TRST),
         .tdi_in(tap_tdo),
-        .tdo_out(ijtag_tdo)
+        .tdo_out(ijtag_tdo),
+        .instrument_shift_reg(instrument_shift_reg)
     );
 
     // ---------------------------
@@ -58,7 +59,7 @@ module chip_top #(
         .tck(TCK),
         .trst_n(TRST),
         .tdi(ijtag_tdo),
-        .tdo(instr_shift[0][0]),
+        .tdo(instrument_shift_reg[0][0]), // BISR serial out
         .ir(ir_out),
         .user_dr_shift(dr_shift[BISR_WIDTH-1:0])
     );
@@ -71,7 +72,7 @@ module chip_top #(
     ) mbist0 (
         .tck(TCK),
         .trst_n(TRST),
-        .tdi_in(instr_shift[0][0]),
+        .tdi_in(instrument_shift_reg[0][0]),
         .tdo_out(TDO)
     );
 
