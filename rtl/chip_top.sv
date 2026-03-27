@@ -36,25 +36,24 @@ module chip_top #(
     );
 
     // --------------------------------------------------------------------
-    // SIB for BISR
+    // SIB for BISR (with shiftable enable)
     // --------------------------------------------------------------------
     logic bisr_tdo;
-    logic sib_enable;
-
-    // Enable BISR only when USER_DR instruction is selected
-    assign sib_enable = (ir_out == 4'b0010);
+    logic [BISR_WIDTH-1:0] bisr_instr_data;
 
     sib #(
         .WIDTH(BISR_WIDTH)
     ) sib_bisr (
         .tck(TCK),
         .trst_n(TRST),
-        .sib_enable(sib_enable),
         .tdi_in(tap_tdo),
         .tdo_out(bisr_tdo),
-        .instr_data_in(),   // optional initial value
-        .instr_data_out()   // optional observation
+        .instr_data_in('0),
+        .instr_data_out(bisr_instr_data)
     );
+
+    // Extract SIB enable from MSB of shift register
+    wire bisr_enable = bisr_instr_data[BISR_WIDTH-1];
 
     // --------------------------------------------------------------------
     // BISR instrument
@@ -62,12 +61,13 @@ module chip_top #(
     logic bisr_out;
 
     bisr #(
-        .DATA_WIDTH(BISR_WIDTH)
+        .DATA_WIDTH(BISR_WIDTH-1)  // remaining bits after enable
     ) bisr0 (
         .tck(TCK),
         .trst_n(TRST),
         .tdi(bisr_tdo),
-        .tdo(bisr_out)
+        .tdo(bisr_out),
+        .enable(bisr_enable)
     );
 
     // --------------------------------------------------------------------
