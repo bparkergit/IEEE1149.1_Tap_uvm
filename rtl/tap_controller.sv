@@ -8,44 +8,25 @@ module tap_controller #(
     input  logic TRST,
     input  logic TDI,
     output logic TDO,
-
-    // Realistic outputs for external instruments
     output logic [IR_WIDTH-1:0] ir_out,
-    output logic [DR_WIDTH-1:0] dr_out,
-    output logic bypass_enable
+    output logic [DR_WIDTH-1:0] dr_out
 );
 
-    // --------------------------
-    // TAP FSM
-    // --------------------------
+    // TAP states
     typedef enum logic [3:0] {
-        TEST_LOGIC_RESET=0,
-        RUN_TEST_IDLE   =1,
-        SELECT_DR_SCAN  =2,
-        CAPTURE_DR      =3,
-        SHIFT_DR        =4,
-        EXIT1_DR        =5,
-        PAUSE_DR        =6,
-        EXIT2_DR        =7,
-        UPDATE_DR       =8,
-        SELECT_IR_SCAN  =9,
-        CAPTURE_IR      =10,
-        SHIFT_IR        =11,
-        EXIT1_IR        =12,
-        PAUSE_IR        =13,
-        EXIT2_IR        =14,
-        UPDATE_IR       =15
+        TEST_LOGIC_RESET, RUN_TEST_IDLE, SELECT_DR_SCAN,
+        CAPTURE_DR, SHIFT_DR, EXIT1_DR, PAUSE_DR, EXIT2_DR, UPDATE_DR,
+        SELECT_IR_SCAN, CAPTURE_IR, SHIFT_IR, EXIT1_IR, PAUSE_IR, EXIT2_IR, UPDATE_IR
     } tap_state_t;
 
     tap_state_t state, next_state;
 
     always_ff @(posedge TCK or posedge TRST) begin
-        if (TRST)
-            state <= TEST_LOGIC_RESET;
-        else
-            state <= next_state;
+        if (TRST) state <= TEST_LOGIC_RESET;
+        else state <= next_state;
     end
 
+    // Next state logic
     always_comb begin
         next_state = state;
         case(state)
@@ -65,69 +46,36 @@ module tap_controller #(
             PAUSE_IR:         next_state = TMS ? EXIT2_IR : PAUSE_IR;
             EXIT2_IR:         next_state = TMS ? UPDATE_IR : SHIFT_IR;
             UPDATE_IR:        next_state = TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
-            default: next_state = TEST_LOGIC_RESET;
+            default:          next_state = TEST_LOGIC_RESET;
         endcase
     end
 
-    // --------------------------
-    // Instruction Register
-    // --------------------------
-    logic [IR_WIDTH-1:0] ir_shift;
-
+    // IR register
+    logic [IR_WIDTH-1:0] ir;
     always_ff @(posedge TCK or posedge TRST) begin
-        if (TRST)
-            ir_shift <= '0;
-        else if (state == CAPTURE_IR)
-            ir_shift <= 4'b0010;  // example fixed capture
-        else if (state == SHIFT_IR)
-            ir_shift <= {TDI, ir_shift[IR_WIDTH-1:1]};
-        else if (state == UPDATE_IR)
-            ir_shift <= ir_shift;
+        if (TRST) ir <= '0;
+        else if (state == CAPTURE_IR) ir <= 4'b0010; // USER_DR
+        else if (state == SHIFT_IR) ir <= {TDI, ir[IR_WIDTH-1:1]};
     end
+    assign ir_out = ir;
 
-    assign ir_out = ir_shift;
-
-    // --------------------------
-    // Data Register Mux
-    // --------------------------
-    logic [DR_WIDTH-1:0] dr_shift;
-    logic [DR_WIDTH-1:0] bypass_reg;
-    logic [DR_WIDTH-1:0] idcode_reg = IDCODE;
-
-    // Capture phase
+    // DR register
+    logic [DR_WIDTH-1:0] dr_shift, bypass;
     always_ff @(posedge TCK or posedge TRST) begin
         if (TRST) begin
             dr_shift <= '0;
-            bypass_reg <= 0;
-        end else if (state == CAPTURE_DR) begin
-            case(ir_shift)
-                4'b0001: bypass_reg <= 0;
-                4'b1110: dr_shift <= idcode_reg; // IDCODE
-                4'b0010: dr_shift <= '0; // USER_DR (BISR can use this)
-                default: bypass_reg <= 0;
-            endcase
-        end
-        else if (state == SHIFT_DR) begin
-            case(ir_shift)
-                4'b0001: bypass_reg <= {TDI, bypass_reg[DR_WIDTH-1:1]};
-                default: dr_shift <= {TDI, dr_shift[DR_WIDTH-1:1]};
-            endcase
+            bypass   <= '0;
+        end else begin
+            if (state == CAPTURE_DR) dr_shift <= '0;
+            if (state == SHIFT_DR) begin
+                if (ir == 4'b0010) dr_shift <= {TDI, dr_shift[DR_WIDTH-1:1]};
+                else bypass <= {TDI, bypass[DR_WIDTH-1:1]};
+            end
         end
     end
-
     assign dr_out = dr_shift;
-    assign bypass_enable = (ir_shift == 4'b0001);
 
-    // --------------------------
-    // TDO mux
-    // --------------------------
-    always_comb begin
-        case(ir_shift)
-            4'b0001: TDO = bypass_reg[0];
-            4'b1110: TDO = dr_shift[0];
-            4'b0010: TDO = dr_shift[0]; // USER_DR -> BISR
-            default: TDO = 1'b0;
-        endcase
-    end
+    // TDO
+    assign TDO = (ir == 4'b0010) ? dr_shift[0] : bypass[0];
 
 endmodule
