@@ -14,20 +14,30 @@ module bisr #(
 );
 
     // ---------------------------
-    // Internal memory
-    // ---------------------------
-    logic [DATA_WIDTH-1:0] memory [0:MEM_DEPTH-1];
-
-    // ---------------------------
     // DR shift register
     // ---------------------------
     logic [DR_WIDTH-1:0] shift_reg;
 
-    // ---------------------------
-    // Extract address & data from DR
-    // ---------------------------
+    // Extract address and data from DR
     wire [$clog2(MEM_DEPTH)-1:0] addr = shift_reg[DR_WIDTH-1 -: $clog2(MEM_DEPTH)];
     wire [DATA_WIDTH-1:0]        data = shift_reg[DATA_WIDTH-1:0];
+
+    // ---------------------------
+    // Memory instance
+    // ---------------------------
+    logic                     mem_write_en;
+    logic [DATA_WIDTH-1:0]    mem_data_out;
+
+    memory #(
+        .DATA_WIDTH(DATA_WIDTH),
+        .DEPTH(MEM_DEPTH)
+    ) mem_inst (
+        .clk      (tck),
+        .write_en (mem_write_en),
+        .addr     (addr),
+        .data_in  (data),
+        .data_out (mem_data_out)
+    );
 
     // ---------------------------
     // TAP-controlled behavior
@@ -37,22 +47,20 @@ module bisr #(
             shift_reg <= '0;
         end else if (enable) begin
             if (capture_dr) begin
-                // Preload shift register with memory[addr=0] as example
-                // Can be extended to select different addresses if needed
-                shift_reg <= { {($clog2(MEM_DEPTH)){1'b0}}, memory[0] };
+                // Preload shift register with memory output at current addr
+                shift_reg <= { {($clog2(MEM_DEPTH)){1'b0}}, mem_data_out };
             end else if (shift_dr) begin
                 // Shift in TDI
                 shift_reg <= {tdi, shift_reg[DR_WIDTH-1:1]};
-            end else if (update_dr) begin
-                // Write to memory at decoded address
-                memory[addr] <= data;
             end
+            // update_dr handled separately by memory write enable
         end
     end
 
-    // ---------------------------
+    // Drive memory write enable only during UPDATE_DR
+    assign mem_write_en = enable & update_dr;
+
     // Serial output
-    // ---------------------------
     assign tdo = shift_reg[0];
 
 endmodule
