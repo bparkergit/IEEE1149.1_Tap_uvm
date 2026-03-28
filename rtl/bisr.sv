@@ -1,16 +1,16 @@
 module bisr #(
     parameter DATA_WIDTH = 8,
-    parameter MEM_DEPTH  = 256
+    parameter MEM_DEPTH  = 256,
+    parameter DR_WIDTH   = DATA_WIDTH + $clog2(MEM_DEPTH)
 )(
-    input  logic             tck,
-    input  logic             trst_n,
-    input  logic             tdi,
-    output logic             tdo,
-    input  logic             enable,           // SIB enable
-    input  logic             capture_dr,       // TAP signals
-    input  logic             shift_dr,
-    input  logic             update_dr,
-    input  logic [$clog2(MEM_DEPTH)-1:0] addr // optional: memory address
+    input  logic                 tck,
+    input  logic                 trst_n,
+    input  logic                 tdi,
+    output logic                 tdo,
+    input  logic                 enable,       // SIB enable / instrument select
+    input  logic                 capture_dr,
+    input  logic                 shift_dr,
+    input  logic                 update_dr
 );
 
     // ---------------------------
@@ -19,9 +19,15 @@ module bisr #(
     logic [DATA_WIDTH-1:0] memory [0:MEM_DEPTH-1];
 
     // ---------------------------
-    // Shift register
+    // DR shift register
     // ---------------------------
-    logic [DATA_WIDTH-1:0] shift_reg;
+    logic [DR_WIDTH-1:0] shift_reg;
+
+    // ---------------------------
+    // Extract address & data from DR
+    // ---------------------------
+    wire [$clog2(MEM_DEPTH)-1:0] addr = shift_reg[DR_WIDTH-1 -: $clog2(MEM_DEPTH)];
+    wire [DATA_WIDTH-1:0]        data = shift_reg[DATA_WIDTH-1:0];
 
     // ---------------------------
     // TAP-controlled behavior
@@ -31,14 +37,15 @@ module bisr #(
             shift_reg <= '0;
         end else if (enable) begin
             if (capture_dr) begin
-                // Preload shift register with memory contents
-                shift_reg <= memory[addr];
+                // Preload shift register with memory[addr=0] as example
+                // Can be extended to select different addresses if needed
+                shift_reg <= { {($clog2(MEM_DEPTH)){1'b0}}, memory[0] };
             end else if (shift_dr) begin
-                // Shift in new TDI bit
-                shift_reg <= {tdi, shift_reg[DATA_WIDTH-1:1]};
+                // Shift in TDI
+                shift_reg <= {tdi, shift_reg[DR_WIDTH-1:1]};
             end else if (update_dr) begin
-                // Write back to memory
-                memory[addr] <= shift_reg;
+                // Write to memory at decoded address
+                memory[addr] <= data;
             end
         end
     end
