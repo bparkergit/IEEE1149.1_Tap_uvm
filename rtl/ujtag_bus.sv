@@ -1,54 +1,94 @@
 module ujtag_bus #(
     parameter BISR_WIDTH  = 8,
+    parameter MEM_DEPTH   = 256,
     parameter MBIST_WIDTH = 16
 )(
     input  logic tck,
     input  logic trst_n,
-    input  logic tdi_in,
-    output logic tdo_bisr,
-    output logic tdo_mbist,
-    input  logic [3:0] ir,
-    input  logic [31:0] dr_shift
+    input  logic tdi,
+    output logic tdo,
+
+    input  logic shift_dr,
+    input  logic capture_dr,
+    input  logic update_dr
 );
 
     // ---------------------------
-    // SIB enables (instrument select)
+    // Internal chain wires
     // ---------------------------
-    logic bisr_enable, mbist_enable;
-
-    always_ff @(posedge tck or negedge trst_n) begin
-        if (!trst_n) begin
-            bisr_enable  <= 1'b0;
-            mbist_enable <= 1'b0;
-        end else if (ir == 4'b0010) begin
-            bisr_enable  <= dr_shift[0];
-            mbist_enable <= dr_shift[1];
-        end
-    end
+    logic sib_bisr_tdo, sib_mbist_tdo;
+    logic bisr_tdi, bisr_tdo;
+    logic mbist_tdi, mbist_tdo;
 
     // ---------------------------
-    // Instruments
+    // SIB for BISR
+    // ---------------------------
+    sib sib_bisr (
+        .tck(tck),
+        .trst_n(trst_n),
+        .tdi(tdi),
+        .tdo(sib_bisr_tdo),
+
+        .shift_dr(shift_dr),
+        .capture_dr(capture_dr),
+        .update_dr(update_dr),
+
+        .child_tdi(bisr_tdi),
+        .child_tdo(bisr_tdo)
+    );
+
+    // ---------------------------
+    // BISR
     // ---------------------------
     bisr #(
-        .DATA_WIDTH(BISR_WIDTH)
+        .DATA_WIDTH(BISR_WIDTH),
+        .MEM_DEPTH(MEM_DEPTH)
     ) bisr0 (
         .tck(tck),
         .trst_n(trst_n),
-        .tdi(tdi_in),
-        .tdo(tdo_bisr),
-        .ir(ir),
-        .user_dr_shift(dr_shift[BISR_WIDTH-1:0]),
-        .enable(bisr_enable)
+        .tdi(bisr_tdi),
+        .tdo(bisr_tdo),
+
+        .enable(1'b1),  // always enabled when SIB opens path
+
+        .shift_dr(shift_dr),
+        .capture_dr(capture_dr),
+        .update_dr(update_dr)
     );
 
+    // ---------------------------
+    // SIB for MBIST
+    // ---------------------------
+    sib sib_mbist (
+        .tck(tck),
+        .trst_n(trst_n),
+        .tdi(sib_bisr_tdo),
+        .tdo(sib_mbist_tdo),
+
+        .shift_dr(shift_dr),
+        .capture_dr(capture_dr),
+        .update_dr(update_dr),
+
+        .child_tdi(mbist_tdi),
+        .child_tdo(mbist_tdo)
+    );
+
+    // ---------------------------
+    // Dummy MBIST
+    // ---------------------------
     dummy_mbist #(
         .WIDTH(MBIST_WIDTH)
     ) mbist0 (
         .tck(tck),
         .trst_n(trst_n),
-        .tdi_in(tdo_bisr),
-        .tdo_out(tdo_mbist),
-        .enable(mbist_enable)
+        .tdi_in(mbist_tdi),
+        .tdo_out(mbist_tdo),
+        .enable(1'b1)
     );
+
+    // ---------------------------
+    // Final TDO
+    // ---------------------------
+    assign tdo = sib_mbist_tdo;
 
 endmodule
