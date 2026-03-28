@@ -34,21 +34,10 @@ module chip_top #(
     );
 
     // ---------------------------
-    // IJTAG / Instrument Bus
+    // Separate instrument shift registers
     // ---------------------------
-    logic [1:0][INSTR_SHIFT_WIDTH-1:0] instrument_shift_reg;
-    logic ijtag_tdo;
-
-    ijtag_bus #(
-        .NUM_INSTR(2),
-        .MAX_WIDTH(INSTR_SHIFT_WIDTH)
-    ) bus0 (
-        .tck(TCK),
-        .trst_n(TRST),
-        .tdi_in(tap_tdo),
-        .tdo_out(ijtag_tdo),
-        .instrument_shift_reg(instrument_shift_reg)
-    );
+    logic [INSTR_SHIFT_WIDTH-1:0] bisr_shift_reg;
+    logic [INSTR_SHIFT_WIDTH-1:0] mbist_shift_reg;
 
     // ---------------------------
     // Single BISR
@@ -58,8 +47,8 @@ module chip_top #(
     ) bisr0 (
         .tck(TCK),
         .trst_n(TRST),
-        .tdi(ijtag_tdo),
-        .tdo(instrument_shift_reg[0][0]), // BISR serial out
+        .tdi(tap_tdo),
+        .tdo(bisr_shift_reg[0]), // LSB of BISR shift register
         .ir(ir_out),
         .user_dr_shift(dr_shift[BISR_WIDTH-1:0])
     );
@@ -72,12 +61,17 @@ module chip_top #(
     ) mbist0 (
         .tck(TCK),
         .trst_n(TRST),
-        .tdi_in(instrument_shift_reg[0][0]),
-        .tdo_out(TDO)
+        .tdi_in(bisr_shift_reg[0]),  // serial input from BISR
+        .tdo_out(mbist_shift_reg[0])  // serial output to TDO
     );
 
     // ---------------------------
-    // Single memory array
+    // TDO output comes from last instrument
+    // ---------------------------
+    assign TDO = mbist_shift_reg[0];
+
+    // ---------------------------
+    // Single memory array for BISR
     // ---------------------------
     logic [BISR_WIDTH-1:0] memory [0:255]; // one memory block
 
