@@ -5,22 +5,19 @@ module bisr #(
     input  logic trst_n,
     input  logic tdi,
     output logic tdo,
+    input  logic [DATA_WIDTH-1:0] user_dr_shift,
     input  logic [3:0] ir,
-    input  logic [DATA_WIDTH-1:0] user_dr_shift
+    input  logic enable
 );
 
-    logic [DATA_WIDTH-1:0] data_reg;
+    logic [DATA_WIDTH-1:0] shift_reg;
+    logic [DATA_WIDTH-1:0] memory [0:255]; // memory inside BISR
 
-    always_ff @(posedge tck or negedge trst_n) begin
-        if (!trst_n) begin
-            data_reg <= '0;
-            tdo      <= 0;
-        end else if (ir == 4'b0010) begin // USER_DR
-            data_reg <= user_dr_shift;
-            tdo      <= data_reg[DATA_WIDTH-1];
-        end else begin
-            tdo <= tdi; // bypass
-        end
+    always_ff @(posedge tck or posedge trst_n) begin
+        if (trst_n) shift_reg <= '0;
+        else if (enable) shift_reg <= {tdi, shift_reg[DATA_WIDTH-1:1]};
     end
+
+    assign tdo = shift_reg[0];
 
 endmodule
