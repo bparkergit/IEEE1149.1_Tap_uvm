@@ -18,10 +18,16 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
     endfunction
 
     task run_phase(uvm_phase phase);
-            bisr_seq_item item;      
+        bisr_seq_item item;    
+    
+        vif.cb_drv.TMS <= 1'b0;
+        vif.cb_drv.TDI <= 1'b0;
+      
         forever begin
           seq_item_port.get_next_item(item);
-
+          
+          goto_ide();
+          
           if(item.wr_ir)
             begin
               @(vif.cb_drv);
@@ -32,9 +38,18 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
               vif.cb_drv.TMS <= 1'b0; // capture IR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b0; // shift IR
-              @(vif.cb_drv);
-              vif.cb_drv.TMS <= 1'b0; 
-              vif.cb_drv.TDI <= vif.item.instr;
+
+              for (int i = 0; i < item.instr_len; i++) begin
+                @(vif.cb_drv);
+                vif.cb_drv.TDI <= item.instr[i];
+
+                // Last bit → exit shift
+                if (i == item.instr_len-1)
+                  vif.cb_drv.TMS <= 1'b1; // Exit1-IR
+                else
+                  vif.cb_drv.TMS <= 1'b0; // stay in Shift-IR
+              end
+              
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // exit1 IR
               @(vif.cb_drv);
@@ -47,4 +62,14 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
             seq_item_port.item_done();
         end
     endtask
+      
+      task goto_idle();
+        repeat(5) begin
+          @(vif.cb_drv);
+          vif.cb_drv.TMS <= 1'b1; // force reset
+        end
+        @(vif.cb_drv);
+        vif.cb_drv.TMS <= 1'b0; // idle
+      endtask
+      
 endclass
