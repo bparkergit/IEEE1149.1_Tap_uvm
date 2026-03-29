@@ -7,8 +7,8 @@ class bisr_base_test extends uvm_test;
 
     bisr_env env;
 
-  function new(string name = "bisr_base_test", uvm_component parent = null);
-        super.new(name, parent);
+    function new(string name = "bisr_base_test", uvm_component parent = null);
+          super.new(name, parent); 
     endfunction
 
     function void build_phase(uvm_phase phase);
