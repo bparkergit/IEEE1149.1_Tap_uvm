@@ -26,7 +26,7 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
         forever begin
           seq_item_port.get_next_item(item);
           
-          goto_ide();
+          goto_idle();
           
           if(item.wr_ir)
             begin
@@ -54,6 +54,33 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
               vif.cb_drv.TMS <= 1'b1; // exit1 IR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // update IR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // IDLE
+            end
+          else if(item.wr_dr)
+            begin
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // select DR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // capture DR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // shift DR
+
+              for (int i = 0; i < item.instr_len; i++) begin
+                @(vif.cb_drv);
+                vif.cb_drv.TDI <= item.instr[i];
+
+                // Last bit → exit shift
+                if (i == item.instr_len-1)
+                  vif.cb_drv.TMS <= 1'b1; // Exit1-DR
+                else
+                  vif.cb_drv.TMS <= 1'b0; // stay in Shift-DR
+              end
+              
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // exit1 DR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // update DR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b0; // IDLE
             end
