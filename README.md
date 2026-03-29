@@ -6,13 +6,10 @@ UVM environment for verification of BISR controller through ijtag.
 
 ### Coverpoints
 
-- `wr_en` 
-- `rd_en`    
-- `full`  
-- `empty`
-- `cross wr_en,full`
-- `cross rd_en,empty`
-
+- `wr_ir` 
+- `wr_dr`    
+- `rd_dr`  
+- `instr`
     
 Functional coverage:
 
