@@ -24,15 +24,12 @@ import uvm_pkg::*;
 // ───────────────────────────────────────────────
 module bisr_tb_top;
 
-    parameter int DEPTH = 16;
-    parameter int WIDTH = 8;
-
     logic clk = 0;
     logic rst_n = 0;
 
     always #5 clk = ~clk;
 
-    bisr_if #(.DEPTH(DEPTH), .WIDTH(WIDTH)) fifo_if_inst (.clk(clk), .rst_n(rst_n));
+    bisr_if bisr_if_inst (.clk(clk), .rst_n(rst_n));
 
     sync_fifo #(
         .DEPTH(DEPTH),
