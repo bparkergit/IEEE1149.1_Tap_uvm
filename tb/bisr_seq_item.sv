@@ -4,7 +4,7 @@
 class bisr_seq_item extends uvm_sequence_item;
 
 
-    rand bit [8:0]	 instruction;
+    rand bit [8:0]	 instr;
     rand bit [31:0]	 data;
 
 
