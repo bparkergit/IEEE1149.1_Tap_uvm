@@ -18,7 +18,7 @@ interface bisr_if (
         input  TDO;
     endclocking
 
-    clocking cb_mon @(posedge clk);
+  clocking cb_mon @(posedge TCK);
         input TRST;
         input TMS;
     	input TDI;
