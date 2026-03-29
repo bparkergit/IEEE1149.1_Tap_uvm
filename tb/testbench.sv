@@ -24,32 +24,27 @@ import uvm_pkg::*;
 // ───────────────────────────────────────────────
 module bisr_tb_top;
 
-    logic clk = 0;
-    logic rst_n = 0;
 
-    always #5 clk = ~clk;
+    logic TCK = 0;
+    logic TRST = 0;
 
-    bisr_if bisr_if_inst (.clk(clk), .rst_n(rst_n));
+    always #5 TCK = ~TCK;
 
-    sync_fifo #(
-        .DEPTH(DEPTH),
-        .WIDTH(WIDTH)
-    ) dut (
-        .clk     (clk),
-        .rst_n   (rst_n),
-        .wr_en   (fifo_if_inst.wr_en),
-        .wr_data (fifo_if_inst.wr_data),
-        .rd_en   (fifo_if_inst.rd_en),
-        .rd_data (fifo_if_inst.rd_data),
-        .full    (fifo_if_inst.full),
-        .empty   (fifo_if_inst.empty)
+  bisr_if bisr_if_inst (.TCK(TCK), .TRST(TRST));
+
+    chip_top dut (
+      .TCK     (TCK),
+      .TMS   (TMS),
+      .TRST   (TRST),
+      .TDI (TDI),
+      .TDO   (TDO)
     );
 
     // Reset generation
     initial begin
-        rst_n = 0;
+        TRST = 1;
         #10;
-        rst_n = 1;
+        TRST = 0;
     end
 
     // UVM + waveform dump
