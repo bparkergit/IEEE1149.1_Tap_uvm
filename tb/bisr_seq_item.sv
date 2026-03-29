@@ -3,17 +3,10 @@
 // ───────────────────────────────────────────────
 class bisr_seq_item extends uvm_sequence_item;
 
-    rand bit         wr_en;
-    rand bit [7:0]   wr_data;
-    rand bit         rd_en;
+    rand bit         TMS;
+    rand bit         TDI;
+    rand bit         TRST;
 
-    bit [7:0]        rd_data;
-    bit              full;
-    bit              empty;
-
-    constraint valid_wr_rd {
-        !(wr_en && rd_en);
-    }
 
   `uvm_object_utils(bisr_seq_item)
 
