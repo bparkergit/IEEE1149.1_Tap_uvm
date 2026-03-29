@@ -20,8 +20,8 @@ Functional coverage:
 - `sim/`       : Scripts/Makefile for running simulations
 
 ## Status
-- [ ] DUT complete
-- [ ] Basic UVM env
+- [X] DUT complete
+- [X] Basic UVM env
 - [ ] Coverage & scoreboard
 
 Tools: Questa/EDA Playground
