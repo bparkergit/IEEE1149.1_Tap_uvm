@@ -22,15 +22,28 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
         forever begin
           seq_item_port.get_next_item(item);
 
-            @(vif.cb_drv);
-            vif.cb_drv.wr_en   <= item.wr_en;
-            vif.cb_drv.wr_data <= item.wr_data;
-            vif.cb_drv.rd_en   <= item.rd_en;
-
-            @(vif.cb_drv);
-            vif.cb_drv.wr_en  <= 0;
-            vif.cb_drv.rd_en  <= 0;
+          if(item.wr_ir)
+            begin
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // select DR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // select IR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // capture IR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // shift IR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; 
+              vif.cb_drv.TDI <= vif.item.instr;
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // exit1 IR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b1; // update IR
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // IDLE
+            end
           
+
             seq_item_port.item_done();
         end
     endtask
