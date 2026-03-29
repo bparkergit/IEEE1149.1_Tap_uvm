@@ -14,42 +14,47 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
             item = bisr_seq_item::type_id::create("item");
       
       // start the test
-      // fill fifo to get write when full
-      repeat (8) begin
+      
+      // write IR
+      begin
   	 	start_item(item); 
-    	assert(item.randomize() with { wr_en==1; rd_en==0; });
+        assert(item.randomize() with {
+          wr_ir==1'b1,
+          wr_dr==1'b0,
+          rd_dr==1'b0, 
+          instruction==4'b0001; });
+        
+        `uvm_info("SEQ", $sformatf("Generated item: instr=%0b data=%02h", item.instr, item.data), UVM_MEDIUM) 
+        
     	finish_item(item);
       end
       
-      repeat(20) begin
-
-            start_item(item);
-            assert(item.randomize() with {
-              wr_en dist {1 := 80, 0 := 20};
-              rd_en dist {1 := 20, 0 := 80};
-            });
-            `uvm_info("SEQ", $sformatf("Generated item: wr_en=%0b wr_data=%02h rd_en=%0b", 
-                                       item.wr_en, item.wr_data, item.rd_en), UVM_MEDIUM)
-            finish_item(item);
-        end
-      // empty fifo to get write when empty
-      repeat (8) begin
+      // write DR
+      begin
   	 	start_item(item); 
-        assert(item.randomize() with { wr_en==0; rd_en==1; });
+        assert(item.randomize() with {
+          wr_dr==1'b1,
+          wr_ir==1'b0,
+          rd_dr==1'b0, 
+          data==32'hDEADBEEF; });
+        
+        `uvm_info("SEQ", $sformatf("Generated item: instr=%0b data=%02h", item.instr, item.data), UVM_MEDIUM) 
+        
     	finish_item(item);
-      end
-      
-      repeat(20) begin
+      end  
 
-            start_item(item);
-            assert(item.randomize() with {
-              wr_en dist {1 := 20, 0 := 80};
-              rd_en dist {1 := 80, 0 := 20};
-            });
-            `uvm_info("SEQ", $sformatf("Generated item: wr_en=%0b wr_data=%02h rd_en=%0b", 
-                                       item.wr_en, item.wr_data, item.rd_en), UVM_MEDIUM)
-            finish_item(item);
-        end
+      // read DR
+      begin
+  	 	start_item(item); 
+        assert(item.randomize() with {
+          wr_dr==1'b1,
+          wr_ir==1'b0,
+          rd_dr==1'b1; });
+        
+        `uvm_info("SEQ", $sformatf("Generated item: instr=%0b data=%02h", item.instr, item.data), UVM_MEDIUM) 
+        
+    	finish_item(item);
+      end  
       
     endtask
 
