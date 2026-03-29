@@ -6,7 +6,7 @@
         `uvm_component_utils(bisr_scoreboard)
 
         
-        // implementation ports  
+        // implementation port  
         // Means this component implements the corresponding write function.
         uvm_analysis_imp #(bisr_seq_item, bisr_scoreboard) imp;
 
@@ -31,13 +31,30 @@
             
             // write function implementation for writes
             function void write(bisr_seq_item txn);
-          if(txn.wr_en) begin
+          if(txn.wr_dr) begin
               if (model_q.size() == DEPTH) begin
       			`uvm_error("MODEL_OVERFLOW","Model overflow")
               end
               else 
-                model_q.push_back(txn.wr_data);
+                model_q.push_back(txn.data);
 
+            if(txn.rd_dr) begin
+              if (model_q.size() == 0) begin
+                `uvm_error("MODEL_UNDERFLOW","Model underflow")
+              end
+              else 
+                begin
+                   expected = model_q.pop_front();
+
+                  if (txn.data !== expected) begin
+                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %8h Got %8h", expected, txn.data))
+                  end
+                  else begin
+                    `uvm_info("MATCH",$sformatf("Matched %8h", txn.data), UVM_LOW)
+                    end
+              
+            end
+            
           end
             
         endfunction
@@ -48,7 +65,7 @@
           // Reset handling
   task run_phase(uvm_phase phase);
     forever begin
-      @(negedge vif.rst_n);
+      @(negedge vif.TRST);
       model_q.delete();
       `uvm_info("RESET","Scoreboard model cleared", UVM_LOW)
     end
