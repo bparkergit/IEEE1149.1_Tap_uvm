@@ -24,7 +24,7 @@ class bisr_agent extends uvm_agent;
         if (is_active == UVM_ACTIVE) begin
         	drv = bisr_driver::type_id::create("drv", this);
         end
-        mon = bisr_monitor::type_id::create("rd_mon", this);
+        mon = bisr_monitor::type_id::create("mon", this);
         ap = new("ap", this);
         coverage  = bisr_coverage::type_id::create("coverage", this);
       
