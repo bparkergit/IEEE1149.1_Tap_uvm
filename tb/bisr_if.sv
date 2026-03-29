@@ -1,48 +1,46 @@
 // ───────────────────────────────────────────────
 //   INTERFACE
 // ───────────────────────────────────────────────
-interface bisr_if #(
-    parameter int DEPTH = 16,
-    parameter int WIDTH = 8
-) (
-    input logic clk,
-    input logic rst_n
+interface bisr_if (
+    input logic TCK,
+    input logic TRST
 );
 
-    logic              wr_en;
-    logic [WIDTH-1:0]  wr_data;
-    logic              rd_en;
-    logic [WIDTH-1:0]  rd_data;
-    logic              full;
-    logic              empty;
+    logic              TMS;
+    logic			   TDI;
+    logic              TDO;
 
-    clocking cb_drv @(posedge clk);
-        output wr_en, wr_data;
-        output rd_en;
-        input  rd_data, full, empty;
+
+  clocking cb_drv @(posedge TCK);
+        output TRST;
+        output TMS;
+    	output TDI;
+        input  TDO;
     endclocking
 
     clocking cb_mon @(posedge clk);
-        input wr_en, wr_data;
-        input rd_en, rd_data;
-        input full, empty;
+        input TRST;
+        input TMS;
+    	input TDI;
+        output  TDO;
     endclocking
 
     modport DUT (
-        input  clk, rst_n,
-        input  wr_en, wr_data,
-        input  rd_en,
-        output rd_data, full, empty
+      	input TCK;
+        input TRST;
+        input TMS;
+    	input TDI;
+        output  TDO;
     );
 
     modport DRIVER (
         clocking cb_drv,
-        input rst_n
+        input TRST
     );
 
     modport MONITOR (
         clocking cb_mon,
-        input rst_n
+        input TRST
     );
 
 endinterface
