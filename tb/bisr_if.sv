@@ -26,10 +26,10 @@ interface bisr_if (
     endclocking
 
     modport DUT (
-      	input TCK;
-        input TRST;
-        input TMS;
-    	input TDI;
+      	input TCK,
+        input TRST,
+        input TMS,
+    	input TDI,
         output  TDO;
     );
 
