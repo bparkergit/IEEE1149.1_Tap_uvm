@@ -1,6 +1,5 @@
 module tap_controller #(
     parameter IR_WIDTH = 4,
-    parameter DR_WIDTH = 32,
     parameter IDCODE   = 32'h1234ABCD
 )(
     input  logic TCK,
@@ -8,11 +7,23 @@ module tap_controller #(
     input  logic TRST,
     input  logic TDI,
     output logic TDO,
+
+    // IR output (for debug / decode)
     output logic [IR_WIDTH-1:0] ir_out,
-    output logic [DR_WIDTH-1:0] dr_out
+
+    // DR control signals (to IJTAG / BISR)
+    output logic shift_dr,
+    output logic capture_dr,
+    output logic update_dr,
+
+    // External DR interface (IJTAG chain)
+    output logic tdi_dr,
+    input  logic tdo_dr
 );
 
-    // TAP states
+    // ============================================================
+    // TAP FSM
+    // ============================================================
     typedef enum logic [3:0] {
         TEST_LOGIC_RESET, RUN_TEST_IDLE, SELECT_DR_SCAN,
         CAPTURE_DR, SHIFT_DR, EXIT1_DR, PAUSE_DR, EXIT2_DR, UPDATE_DR,
@@ -22,11 +33,13 @@ module tap_controller #(
     tap_state_t state, next_state;
 
     always_ff @(posedge TCK or posedge TRST) begin
-        if (TRST) state <= TEST_LOGIC_RESET;
-        else state <= next_state;
+        if (TRST)
+            state <= TEST_LOGIC_RESET;
+        else
+            state <= next_state;
     end
 
-    // Next state logic
+    // Next-state logic
     always_comb begin
         next_state = state;
         case(state)
@@ -39,6 +52,7 @@ module tap_controller #(
             PAUSE_DR:         next_state = TMS ? EXIT2_DR : PAUSE_DR;
             EXIT2_DR:         next_state = TMS ? UPDATE_DR : SHIFT_DR;
             UPDATE_DR:        next_state = TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
+
             SELECT_IR_SCAN:   next_state = TMS ? TEST_LOGIC_RESET : CAPTURE_IR;
             CAPTURE_IR:       next_state = TMS ? EXIT1_IR : SHIFT_IR;
             SHIFT_IR:         next_state = TMS ? EXIT1_IR : SHIFT_IR;
@@ -46,36 +60,63 @@ module tap_controller #(
             PAUSE_IR:         next_state = TMS ? EXIT2_IR : PAUSE_IR;
             EXIT2_IR:         next_state = TMS ? UPDATE_IR : SHIFT_IR;
             UPDATE_IR:        next_state = TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
+
             default:          next_state = TEST_LOGIC_RESET;
         endcase
     end
 
-    // IR register
+    // ============================================================
+    // DR CONTROL SIGNALS (EXPORTED)
+    // ============================================================
+    assign shift_dr   = (state == SHIFT_DR);
+    assign capture_dr = (state == CAPTURE_DR);
+    assign update_dr  = (state == UPDATE_DR);
+
+    // ============================================================
+    // IR REGISTER
+    // ============================================================
     logic [IR_WIDTH-1:0] ir;
+
     always_ff @(posedge TCK or posedge TRST) begin
-        if (TRST) ir <= '0;
-        else if (state == CAPTURE_IR) ir <= 4'b0010; // USER_DR
-        else if (state == SHIFT_IR) ir <= {TDI, ir[IR_WIDTH-1:1]};
+        if (TRST)
+            ir <= '0;
+        else if (state == CAPTURE_IR)
+            ir <= 4'b0010;  // USER_DR default pattern
+        else if (state == SHIFT_IR)
+            ir <= {TDI, ir[IR_WIDTH-1:1]};
     end
+
     assign ir_out = ir;
 
-    // DR register
-    logic [DR_WIDTH-1:0] dr_shift, bypass;
-    always_ff @(posedge TCK or posedge TRST) begin
-        if (TRST) begin
-            dr_shift <= '0;
-            bypass   <= '0;
-        end else begin
-            if (state == CAPTURE_DR) dr_shift <= '0;
-            if (state == SHIFT_DR) begin
-                if (ir == 4'b0010) dr_shift <= {TDI, dr_shift[DR_WIDTH-1:1]};
-                else bypass <= {TDI, bypass[DR_WIDTH-1:1]};
-            end
-        end
-    end
-    assign dr_out = dr_shift;
+    // ============================================================
+    // BYPASS REGISTER (1-bit in real JTAG, kept simple here)
+    // ============================================================
+    logic bypass_reg;
 
-    // TDO
-    assign TDO = (ir == 4'b0010) ? dr_shift[0] : bypass[0];
+    always_ff @(posedge TCK or posedge TRST) begin
+        if (TRST)
+            bypass_reg <= 1'b0;
+        else if (state == CAPTURE_DR)
+            bypass_reg <= 1'b0;
+        else if (state == SHIFT_DR && ir != 4'b0010)
+            bypass_reg <= TDI;
+    end
+
+    // ============================================================
+    // DR PATH ROUTING
+    // ============================================================
+
+    // Always drive TDI into external DR chain
+    assign tdi_dr = TDI;
+
+    // TDO mux:
+    // USER_DR → external IJTAG chain
+    // otherwise → bypass
+    always_comb begin
+        case (ir)
+            4'b0010: TDO = tdo_dr;     // USER_DR
+            default: TDO = bypass_reg; // BYPASS
+        endcase
+    end
 
 endmodule
