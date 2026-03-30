@@ -2,7 +2,7 @@
 //   MONITOR WR
 // ───────────────────────────────────────────────
 class bisr_monitor extends uvm_monitor;
-  `uvm_component_utils(bisr_write_monitor)
+  `uvm_component_utils(bisr_monitor)
         
   uvm_analysis_port #(bisr_seq_item) ap;
          virtual bisr_if.MONITOR vif;
@@ -46,22 +46,22 @@ class bisr_monitor extends uvm_monitor;
             @(vif.cb_mon);
                  
           case(state)
-              TEST_LOGIC_RESET: state = TMS ? TEST_LOGIC_RESET : RUN_TEST_IDLE;
-              RUN_TEST_IDLE:    state = TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
-              SELECT_DR_SCAN:   state = TMS ? SELECT_IR_SCAN : CAPTURE_DR;
-              CAPTURE_DR:       state = TMS ? EXIT1_DR : SHIFT_DR;
-              SHIFT_DR:         state = TMS ? EXIT1_DR : SHIFT_DR;
-              EXIT1_DR:         state = TMS ? UPDATE_DR : PAUSE_DR;
-              PAUSE_DR:         state = TMS ? EXIT2_DR : PAUSE_DR;
-              EXIT2_DR:         state = TMS ? UPDATE_DR : SHIFT_DR;
-              UPDATE_DR:        state = TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
-              SELECT_IR_SCAN:   state = TMS ? TEST_LOGIC_RESET : CAPTURE_IR;
-              CAPTURE_IR:       state = TMS ? EXIT1_IR : SHIFT_IR;
-              SHIFT_IR:         state = TMS ? EXIT1_IR : SHIFT_IR;
-              EXIT1_IR:         state = TMS ? UPDATE_IR : PAUSE_IR;
-              PAUSE_IR:         state = TMS ? EXIT2_IR : PAUSE_IR;
-              EXIT2_IR:         state = TMS ? UPDATE_IR : SHIFT_IR;
-              UPDATE_IR:        state = TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
+              TEST_LOGIC_RESET: state = vif.cb_mon.TMS ? TEST_LOGIC_RESET : RUN_TEST_IDLE;
+              RUN_TEST_IDLE:    state = vif.cb_mon.TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
+              SELECT_DR_SCAN:   state = vif.cb_mon.TMS ? SELECT_IR_SCAN : CAPTURE_DR;
+              CAPTURE_DR:       state = vif.cb_mon.TMS ? EXIT1_DR : SHIFT_DR;
+              SHIFT_DR:         state = vif.cb_mon.TMS ? EXIT1_DR : SHIFT_DR;
+              EXIT1_DR:         state = vif.cb_mon.TMS ? UPDATE_DR : PAUSE_DR;
+              PAUSE_DR:         state = vif.cb_mon.TMS ? EXIT2_DR : PAUSE_DR;
+              EXIT2_DR:         state = vif.cb_mon.TMS ? UPDATE_DR : SHIFT_DR;
+              UPDATE_DR:        state = vif.cb_mon.TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
+              SELECT_IR_SCAN:   state = vif.cb_mon.TMS ? TEST_LOGIC_RESET : CAPTURE_IR;
+              CAPTURE_IR:       state = vif.cb_mon.TMS ? EXIT1_IR : SHIFT_IR;
+              SHIFT_IR:         state = vif.cb_mon.TMS ? EXIT1_IR : SHIFT_IR;
+              EXIT1_IR:         state = vif.cb_mon.TMS ? UPDATE_IR : PAUSE_IR;
+              PAUSE_IR:         state = vif.cb_mon.TMS ? EXIT2_IR : PAUSE_IR;
+              EXIT2_IR:         state = vif.cb_mon.TMS ? UPDATE_IR : SHIFT_IR;
+              UPDATE_IR:        state = vif.cb_mon.TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
               default:          state = TEST_LOGIC_RESET;
           endcase
 
@@ -70,7 +70,7 @@ class bisr_monitor extends uvm_monitor;
             
             
             if(state == SHIFT_IR)
-              instr = {instr[30:0],TDI};
+              instr = {instr[30:0],vif.cb_mon.TDI};
 
             if(state == EXIT1_IR)
               begin
