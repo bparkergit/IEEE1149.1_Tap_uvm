@@ -79,7 +79,7 @@ class bisr_monitor extends uvm_monitor;
                 txn.wr_ir = 1'b1;
                 ap.write(txn);     
                 
-                `uvm_info("MON", $sformatf("Write IR observed: %0h", txn.instr), UVM_LOW);
+                `uvm_info("MON", $sformatf("Write IR observed: %4b", txn.instr), UVM_LOW);
               end
 
           end
