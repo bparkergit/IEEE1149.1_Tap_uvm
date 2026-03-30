@@ -30,7 +30,7 @@ interface bisr_if (
         input TRST,
         input TMS,
     	input TDI,
-        output  TDO;
+        output  TDO
     );
 
     modport DRIVER (
