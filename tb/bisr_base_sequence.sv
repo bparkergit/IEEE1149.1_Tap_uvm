@@ -22,7 +22,7 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
           wr_ir==1'b1;
           wr_dr==1'b0;
           rd_dr==1'b0;
-          instruction==4'b0001; });
+          instr==4'b0001; });
         
         `uvm_info("SEQ", $sformatf("Generated item: instr=%0b data=%02h", item.instr, item.data), UVM_MEDIUM) 
         
