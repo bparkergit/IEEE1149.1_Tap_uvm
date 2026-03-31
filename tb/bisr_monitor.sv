@@ -19,7 +19,7 @@ class bisr_monitor extends uvm_monitor;
     tap_state_t state, next_state;
   
   bit [3:0] instr;
-  bit [31:0] data;
+  bit [31:0] data,data_tdo;
   
   
   function new(string name = "bisr_monitor", uvm_component parent);            
@@ -70,18 +70,48 @@ class bisr_monitor extends uvm_monitor;
             
             
             if(state == SHIFT_IR)
-              instr = {instr[30:0],vif.cb_mon.TDI};
+              instr = {instr[2:0],vif.cb_mon.TDI};
 
             if(state == EXIT1_IR)
               begin
                 txn = bisr_seq_item::type_id::create("txn");
                 txn.instr = instr;
                 txn.wr_ir = 1'b1;
+                txn.wr_dr = 1'b0;
+                txn.rd_dr = 1'b0;
                 ap.write(txn);     
                 
                 `uvm_info("MON", $sformatf("Write IR observed: %4b", txn.instr), UVM_LOW);
               end
 
+                        
+            if(state == SHIFT_DR) begin
+              data = {data[30:0],vif.cb_mon.TDI};
+              data_tdo = {data_tdo[30:0],vif.cb_mon.TDO};
+            end
+
+            if(state == EXIT1_DR)
+              begin
+                txn = bisr_seq_item::type_id::create("txn");
+                txn.wr_ir = 1'b0;
+                txn.wr_dr = 1'b1;
+                txn.rd_dr = 1'b0;
+                txn.data = data;
+                ap.write(txn);     
+                
+                `uvm_info("MON", $sformatf("Write DR observed: %4b", txn.data), UVM_LOW);
+                
+                txn = bisr_seq_item::type_id::create("txn");
+                txn.wr_ir = 1'b0;
+                txn.wr_dr = 1'b0;
+                txn.rd_dr = 1'b1;
+                txn.data = data_tdo;
+                ap.write(txn);     
+                
+                `uvm_info("MON", $sformatf("Read DR observed: %4b", txn.data), UVM_LOW);
+                
+              end
+            
           end
         
   endtask
