@@ -48,9 +48,6 @@ module ujtag_bus #(
         .trst_n(trst_n),
         .tdi(bisr_tdi),
         .tdo(bisr_tdo),
-
-        .enable(1'b1),  // always enabled when SIB opens path
-
         .shift_dr(shift_dr),
         .capture_dr(capture_dr),
         .update_dr(update_dr)
@@ -82,8 +79,7 @@ module ujtag_bus #(
         .tck(tck),
         .trst_n(trst_n),
         .tdi_in(mbist_tdi),
-        .tdo_out(mbist_tdo),
-        .enable(1'b1)
+        .tdo_out(mbist_tdo)
     );
 
     // ---------------------------
