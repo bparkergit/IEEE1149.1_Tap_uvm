@@ -53,7 +53,7 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // exit1 IR
               @(vif.cb_drv);
-              vif.cb_drv.TMS <= 1'b1; // update IR
+              vif.cb_drv.TMS <= 1'b0; // update IR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b0; // IDLE
             end
@@ -80,7 +80,7 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // exit1 DR
               @(vif.cb_drv);
-              vif.cb_drv.TMS <= 1'b1; // update DR
+              vif.cb_drv.TMS <= 1'b0; // update DR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b0; // IDLE
             end
@@ -94,7 +94,6 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
         repeat(5) begin
           @(vif.cb_drv);
           vif.cb_drv.TMS <= 1'b1; // force reset
-          vif.cb_drv.TRST <= 1'b1;
         end
         @(vif.cb_drv);
         vif.cb_drv.TMS <= 1'b0; // idle
