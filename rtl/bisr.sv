@@ -7,7 +7,6 @@ module bisr #(
     input  logic                 trst_n,
     input  logic                 tdi,
     output logic                 tdo,
-    input  logic                 enable,       // SIB enable / instrument select
     input  logic                 capture_dr,
     input  logic                 shift_dr,
     input  logic                 update_dr
