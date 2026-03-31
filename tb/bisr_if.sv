@@ -22,7 +22,7 @@ interface bisr_if (
         input TRST;
         input TMS;
     	input TDI;
-        output  TDO;
+        input  TDO;
     endclocking
 
     modport DUT (
@@ -34,13 +34,11 @@ interface bisr_if (
     );
 
     modport DRIVER (
-        clocking cb_drv,
-        input TRST
+        clocking cb_drv
     );
 
     modport MONITOR (
-        clocking cb_mon,
-        input TRST
+        clocking cb_mon
     );
 
 endinterface
