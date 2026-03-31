@@ -24,18 +24,24 @@ module sib (
     // ---------------------------
     logic sib_shift_reg;  // temporary shift register during SHIFT_DR
 
+    logic next_sib_shift_reg;
 
-    // ---------------------------
-    // Shift register behavior
-    // ---------------------------
+    always_comb begin
+        next_sib_shift_reg = sib_shift_reg;
+
+        if (capture_dr)
+            next_sib_shift_reg = sib_bit;
+        else if (shift_dr)
+            next_sib_shift_reg = tdi;
+    end
+
     always_ff @(posedge tck or negedge trst_n) begin
         if (!trst_n)
             sib_shift_reg <= 1'b0;
-        else if (capture_dr)
-            sib_shift_reg <= sib_bit;  // preload current enable
-        else if (shift_dr)
-            sib_shift_reg <= tdi;      // shift in new value
+        else
+            sib_shift_reg <= next_sib_shift_reg;
     end
+
 
     // ---------------------------
     // Latch enable on UPDATE_DR
