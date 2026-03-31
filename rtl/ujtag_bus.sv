@@ -32,7 +32,7 @@ module ujtag_bus #(
         .shift_dr(shift_dr),
         .capture_dr(capture_dr),
         .update_dr(update_dr),
-
+      .sib_bit(bisr_sib_enable),
         .child_tdi(bisr_tdi),
         .child_tdo(bisr_tdo)
     );
@@ -48,6 +48,7 @@ module ujtag_bus #(
         .trst_n(trst_n),
         .tdi(bisr_tdi),
         .tdo(bisr_tdo),
+      .enable(bisr_sib_enable),
         .shift_dr(shift_dr),
         .capture_dr(capture_dr),
         .update_dr(update_dr)
@@ -66,6 +67,7 @@ module ujtag_bus #(
         .capture_dr(capture_dr),
         .update_dr(update_dr),
 
+      .sib_bit(mbist_sib_enable),
         .child_tdi(mbist_tdi),
         .child_tdo(mbist_tdo)
     );
@@ -77,6 +79,7 @@ module ujtag_bus #(
         .WIDTH(MBIST_WIDTH)
     ) mbist0 (
         .tck(tck),
+      .enable(mbist_sib_enable),
         .trst_n(trst_n),
         .tdi_in(mbist_tdi),
         .tdo_out(mbist_tdo)
