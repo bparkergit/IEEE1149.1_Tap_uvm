@@ -10,6 +10,7 @@ class bisr_seq_item extends uvm_sequence_item;
   rand bit	wr_ir;
   rand bit	wr_dr;
   rand bit	rd_dr;
+  rand int	dr_bits;
 
 
   `uvm_object_utils(bisr_seq_item)
