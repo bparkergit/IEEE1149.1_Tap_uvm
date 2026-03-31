@@ -32,15 +32,7 @@ module bisr #(
     logic [$clog2(MEM_DEPTH)-1:0] latched_addr;
     logic [DATA_WIDTH-1:0]        latched_data;
 
-    always_ff @(posedge tck or negedge trst_n) begin
-        if (!trst_n) begin
-            latched_addr <= '0;
-            latched_data <= '0;
-        end else if (update_dr & enable) begin
-            latched_addr <= addr_in;
-            latched_data <= data_in;
-        end
-    end
+
 
     // ---------------------------
     // Memory instance
@@ -53,8 +45,8 @@ module bisr #(
     ) mem_inst (
         .clk      (tck),
         .write_en (update_dr & enable),
-        .addr     (latched_addr),
-        .data_in  (latched_data),
+        .addr     (addr_in),
+        .data_in  (data_in),
         .data_out (mem_data_out)
     );
 
