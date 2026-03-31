@@ -1,3 +1,7 @@
+// ================================================================
+// SIB (Segment Insertion Bit) for selecting downstream block
+// Simple, clean version for BISR/MBIST selection
+// ================================================================
 module sib (
     input  logic tck,
     input  logic trst_n,
@@ -6,16 +10,19 @@ module sib (
     output logic tdo,
 
     input  logic shift_dr,
-    input  logic update_dr,
     input  logic capture_dr,
+    input  logic update_dr,
 
     // downstream chain
     input  logic child_tdo,
     output logic child_tdi
 );
 
-    logic sib_bit;        // latched enable
-    logic sib_shift_reg;  // shift register
+    // ---------------------------
+    // Registers
+    // ---------------------------
+    logic sib_shift_reg;  // temporary shift register during SHIFT_DR
+    logic sib_bit;        // latched enable for downstream block
 
     // ---------------------------
     // Shift register behavior
@@ -24,13 +31,13 @@ module sib (
         if (!trst_n)
             sib_shift_reg <= 1'b0;
         else if (capture_dr)
-            sib_shift_reg <= sib_bit;
+            sib_shift_reg <= sib_bit;  // preload current enable
         else if (shift_dr)
-            sib_shift_reg <= tdi;
+            sib_shift_reg <= tdi;      // shift in new value
     end
 
     // ---------------------------
-    // Update enable
+    // Latch enable on UPDATE_DR
     // ---------------------------
     always_ff @(posedge tck or negedge trst_n) begin
         if (!trst_n)
@@ -40,10 +47,13 @@ module sib (
     end
 
     // ---------------------------
-    // Muxing behavior
+    // Pass TDI downstream
     // ---------------------------
-    assign child_tdi = sib_shift_reg;
+    assign child_tdi = tdi;
 
+    // ---------------------------
+    // TDO mux
+    // ---------------------------
     assign tdo = (sib_bit) ? child_tdo : sib_shift_reg;
 
 endmodule
