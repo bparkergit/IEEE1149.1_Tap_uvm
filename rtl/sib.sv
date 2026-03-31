@@ -15,14 +15,15 @@ module sib (
 
     // downstream chain
     input  logic child_tdo,
-    output logic child_tdi
+    output logic child_tdi,
+    output logic sib_bit
 );
 
     // ---------------------------
     // Registers
     // ---------------------------
     logic sib_shift_reg;  // temporary shift register during SHIFT_DR
-    logic sib_bit;        // latched enable for downstream block
+
 
     // ---------------------------
     // Shift register behavior
