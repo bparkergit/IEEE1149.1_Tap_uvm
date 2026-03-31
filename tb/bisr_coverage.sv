@@ -40,8 +40,8 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
       // This is called automatically via analysis_export
   virtual function void write(bisr_seq_item t);
     // debug
-    `uvm_info("COV_SAMPLE", $sformatf("Sampling txn: wr_ir=%0b wr_dr=%0b rd_rd=%0b instr=%0b", 
-                                     t.wr_ir, t.wr_dr, t.rd_dr, t.instr), UVM_MEDIUM)
+   // `uvm_info("COV_SAMPLE", $sformatf("Sampling txn: wr_ir=%0b wr_dr=%0b rd_rd=%0b instr=%4b", 
+  //                                   t.wr_ir, t.wr_dr, t.rd_dr, t.instr), UVM_MEDIUM)
     // Pass relevant fields to the covergroup's sample function
     cg_transaction.sample(
       .wr_ir   (t.wr_ir),
