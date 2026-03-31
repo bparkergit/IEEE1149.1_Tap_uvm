@@ -4,8 +4,8 @@ module dummy_mbist #(
     input  logic tck,
     input  logic trst_n,
     input  logic tdi_in,      // serial input from previous instrument
-    output logic tdo_out,     // serial output to next in chain
-    input  logic enable       // SIB enable / instrument select
+    output logic tdo_out     // serial output to next in chain
+
 );
 
     // ---------------------------
