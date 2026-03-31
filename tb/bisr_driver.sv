@@ -66,9 +66,9 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b0; // shift DR
 
-              for (int i = 0; i < $bits(item.instr); i++) begin
+              for (int i = 0; i < $bits(item.data); i++) begin
                 @(vif.cb_drv);
-                vif.cb_drv.TDI <= item.instr[i];
+                vif.cb_drv.TDI <= item.data[i];
 
                 // Last bit → exit shift
                 if (i == $bits(item.instr)-1)
