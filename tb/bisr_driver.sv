@@ -31,6 +31,8 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
           if(item.wr_ir)
             begin
               @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // IDLE
+              @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // select DR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // select IR
@@ -59,6 +61,8 @@ class bisr_driver extends uvm_driver #(bisr_seq_item);
             end
           else if(item.wr_dr)
             begin
+              @(vif.cb_drv);
+              vif.cb_drv.TMS <= 1'b0; // select DR
               @(vif.cb_drv);
               vif.cb_drv.TMS <= 1'b1; // select DR
               @(vif.cb_drv);
