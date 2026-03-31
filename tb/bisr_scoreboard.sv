@@ -32,14 +32,10 @@
 
         
         // write function implementation    
+        
         function void write(bisr_seq_item txn); 
-          if(txn.wr_dr) 
-              if (model_q.size() == DEPTH) 
-      			`uvm_error("MODEL_OVERFLOW","Model overflow")
-              else 
-                model_q.push_back(txn.data_tdi);
-
-            if(txn.rd_dr) 
+                      
+          if(txn.rd_dr) 
               if (model_q.size() == 0) begin
                 `uvm_error("MODEL_UNDERFLOW","Model underflow")
               end
@@ -51,11 +47,16 @@
                     `uvm_error("DATA_MISMATCH",$sformatf("Expected %8h Got %8h", expected, txn.data_tdo))
                   else 
                     `uvm_info("MATCH",$sformatf("Matched %8h", txn.data_tdo), UVM_LOW);
-
-  
-                   
-             
+             s
                 end
+          
+          if(txn.wr_dr) 
+              if (model_q.size() == DEPTH) 
+      			`uvm_error("MODEL_OVERFLOW","Model overflow")
+              else 
+                model_q.push_back(txn.data_tdi);
+
+
             
         endfunction
 
