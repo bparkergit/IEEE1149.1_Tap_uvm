@@ -113,9 +113,9 @@ class bisr_monitor extends uvm_monitor;
                 txn.data_tdo = data_tdo;
                 ap.write(txn);     
                 
-                `uvm_info("MON", $sformatf("Write DR observed: %8h", txn.data), UVM_LOW);
+                `uvm_info("MON", $sformatf("Write DR observed: %8h", txn.data_tdi), UVM_LOW);
                 
-                `uvm_info("MON", $sformatf("Read DR observed: %8h", txn.data), UVM_LOW);
+                `uvm_info("MON", $sformatf("Read DR observed: %8h", txn.data_tdo), UVM_LOW);
                 
               end
             
