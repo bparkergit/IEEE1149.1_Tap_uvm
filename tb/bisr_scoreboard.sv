@@ -37,7 +37,7 @@
               if (model_q.size() == DEPTH) 
       			`uvm_error("MODEL_OVERFLOW","Model overflow")
               else 
-                model_q.push_back(txn.data);
+                model_q.push_back(txn.data_tdi);
 
             if(txn.rd_dr) 
               if (model_q.size() == 0) begin
@@ -47,10 +47,10 @@
                 begin
                    expected = model_q.pop_front();
 
-                  if (txn.data !== expected) 
-                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %8h Got %8h", expected, txn.data))
+                  if (txn.data_tdo !== expected) 
+                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %8h Got %8h", expected, txn.data_tdo))
                   else 
-                    `uvm_info("MATCH",$sformatf("Matched %8h", txn.data), UVM_LOW);
+                    `uvm_info("MATCH",$sformatf("Matched %8h", txn.data_tdo), UVM_LOW);
 
   
                    
