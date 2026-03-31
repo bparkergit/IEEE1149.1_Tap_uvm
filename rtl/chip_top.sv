@@ -45,7 +45,7 @@ module chip_top (
     // ---------------------------
     ujtag_bus bus0 (
         .tck(TCK),
-        .trst_n(TRST),
+        .trst_n(!TRST),
         .tdi(tdi_to_ijtag),
         .tdo(tdo_from_ijtag),
 
