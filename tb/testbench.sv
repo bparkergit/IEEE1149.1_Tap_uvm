@@ -28,22 +28,23 @@ module bisr_tb_top;
     logic TCK = 0;
     logic TRST = 0;
 
+
     always #5 TCK = ~TCK;
 
   bisr_if bisr_if_inst (.TCK(TCK), .TRST(TRST));
 
-    chip_top dut (
-      .TCK     (TCK),
-      .TMS   (TMS),
-      .TRST   (TRST),
-      .TDI (TDI),
-      .TDO   (TDO)
-    );
+chip_top dut (
+  .TCK  (TCK),
+  .TRST (TRST),
+  .TMS  (bisr_if_inst.TMS),
+  .TDI  (bisr_if_inst.TDI),
+  .TDO  (bisr_if_inst.TDO)
+);
 
     // Reset generation
     initial begin
         TRST = 1;
-        #10;
+        #20;
         TRST = 0;
     end
 
