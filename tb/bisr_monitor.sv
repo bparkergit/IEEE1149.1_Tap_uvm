@@ -33,7 +33,8 @@ class bisr_monitor extends uvm_monitor;
   
   bit [3:0] instr;
   bit [31:0] data_tdi,data_tdo;
-  
+  int dr_bits;
+  string bin_str;
   
   function new(string name = "bisr_monitor", uvm_component parent);            
     super.new(name,parent);       
@@ -58,7 +59,74 @@ class bisr_monitor extends uvm_monitor;
           forever begin
             @(vif.cb_mon);
                  
-          case(state)
+
+         if(vif.cb_mon.TRST)
+                state = TEST_LOGIC_RESET;
+            
+            if(state == SHIFT_IR)
+              instr = {vif.cb_mon.TDI,instr[3:1]};
+
+
+            if(state == EXIT1_IR)
+              begin
+                txn = bisr_seq_item::type_id::create("txn");
+                txn.instr = instr;
+                txn.wr_ir = 1'b1;
+                txn.wr_dr = 1'b0;
+                txn.rd_dr = 1'b0;
+                ap.write(txn);     
+                
+                `uvm_info("MON", $sformatf("Write IR observed: %4b", txn.instr), UVM_LOW);
+              end
+
+                        
+            if (state == CAPTURE_DR) begin
+              data_tdi <= '0;
+              data_tdo <= '0;
+              dr_bits = 0;
+            end
+            else if (state == SHIFT_DR && !vif.cb_mon.TMS) begin
+              data_tdi <= {vif.cb_mon.TDI,data_tdi[30:0]};
+              data_tdo <= {data_tdo[31:1],vif.cb_mon.TDO};
+              
+              if(!vif.cb_mon.TMS)
+              dr_bits++;
+            end
+            
+            if(state == EXIT1_DR)
+              begin
+                txn = bisr_seq_item::type_id::create("txn");
+                txn.wr_ir = 1'b0;
+                txn.wr_dr = 1'b1;
+                txn.rd_dr = 1'b1;
+                txn.data_tdi = data_tdi;
+                txn.data_tdo = data_tdo;
+                txn.dr_bits = dr_bits;
+                ap.write(txn);     
+                
+                bin_str = "";
+
+           
+                for (int i = dr_bits - 1; i >= 0; i--) begin
+                  bin_str = {bin_str, txn.data_tdi[32-i] ? "1" : "0"};
+            
+                end
+
+                `uvm_info("MON", $sformatf("Write DR observed: %s dr_bits: %d", bin_str, dr_bits), UVM_LOW)
+
+
+                bin_str = "";
+                
+                for (int i = dr_bits - 1; i >= 0; i--) begin
+                  bin_str = {bin_str, txn.data_tdo[32-i] ? "1" : "0"};
+                end
+
+                `uvm_info("MON", $sformatf("Read DR observed: %s", bin_str) ,UVM_LOW);
+                
+                
+              end        
+                      
+            case(state)
               TEST_LOGIC_RESET: state = vif.cb_mon.TMS ? TEST_LOGIC_RESET : RUN_TEST_IDLE;
               RUN_TEST_IDLE:    state = vif.cb_mon.TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
               SELECT_DR_SCAN:   state = vif.cb_mon.TMS ? SELECT_IR_SCAN : CAPTURE_DR;
@@ -77,47 +145,7 @@ class bisr_monitor extends uvm_monitor;
               UPDATE_IR:        state = vif.cb_mon.TMS ? SELECT_DR_SCAN : RUN_TEST_IDLE;
               default:          state = TEST_LOGIC_RESET;
           endcase
-
-         if(vif.cb_mon.TRST)
-                state = TEST_LOGIC_RESET;
             
-          //  $display("state = %0d", state);
-            if(state == SHIFT_IR)
-              instr = {instr[2:0],vif.cb_mon.TDI};
-
-            if(state == EXIT1_IR)
-              begin
-                txn = bisr_seq_item::type_id::create("txn");
-                txn.instr = instr;
-                txn.wr_ir = 1'b1;
-                txn.wr_dr = 1'b0;
-                txn.rd_dr = 1'b0;
-                ap.write(txn);     
-                
-                `uvm_info("MON", $sformatf("Write IR observed: %4b", txn.instr), UVM_LOW);
-              end
-
-                        
-            if(state == SHIFT_DR) begin
-              data_tdi = {vif.cb_mon.TDI,data_tdi[31:1]};
-              data_tdo = {vif.cb_mon.TDO,data_tdo[31:1]};
-            end
-
-            if(state == EXIT1_DR)
-              begin
-                txn = bisr_seq_item::type_id::create("txn");
-                txn.wr_ir = 1'b0;
-                txn.wr_dr = 1'b1;
-                txn.rd_dr = 1'b1;
-                txn.data_tdi = data_tdi;
-                txn.data_tdo = data_tdo;
-                ap.write(txn);     
-                
-                `uvm_info("MON", $sformatf("Write DR observed: %8h", txn.data_tdi), UVM_LOW);
-                
-                `uvm_info("MON", $sformatf("Read DR observed: %8h", txn.data_tdo), UVM_LOW);
-                
-              end
             
           end
         
