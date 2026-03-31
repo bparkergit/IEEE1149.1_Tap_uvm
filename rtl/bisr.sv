@@ -44,7 +44,7 @@ module bisr #(
     always_ff @(posedge tck or negedge trst_n) begin
         if (!trst_n) begin
             shift_reg <= '0;
-        end else if (enable) begin
+        end else begin
             if (capture_dr) begin
                 // Preload shift register with memory output at current addr
                 shift_reg <= { {($clog2(MEM_DEPTH)){1'b0}}, mem_data_out };
@@ -57,7 +57,7 @@ module bisr #(
     end
 
     // Drive memory write enable only during UPDATE_DR
-    assign mem_write_en = enable & update_dr;
+    assign mem_write_en = update_dr;
 
     // Serial output
     assign tdo = shift_reg[0];
