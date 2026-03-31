@@ -16,7 +16,7 @@ module dummy_mbist #(
     always_ff @(posedge tck or negedge trst_n) begin
         if (!trst_n)
             shift_reg <= '0;
-        else if (enable)
+        else 
             shift_reg <= {tdi_in, shift_reg[WIDTH-1:1]};
     end
 
