@@ -81,7 +81,7 @@ class bisr_monitor extends uvm_monitor;
          if(vif.cb_mon.TRST)
                 state = TEST_LOGIC_RESET;
             
-            $display("state = %0d", state);
+          //  $display("state = %0d", state);
             if(state == SHIFT_IR)
               instr = {instr[2:0],vif.cb_mon.TDI};
 
