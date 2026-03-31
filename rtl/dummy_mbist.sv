@@ -4,8 +4,8 @@ module dummy_mbist #(
     input  logic tck,
     input  logic trst_n,
     input  logic tdi_in,      // serial input from previous instrument
-    output logic tdo_out     // serial output to next in chain
-
+    output logic tdo_out,     // serial output to next in chain
+	input	logic enable
 );
 
     // ---------------------------
@@ -16,7 +16,7 @@ module dummy_mbist #(
     always_ff @(posedge tck or negedge trst_n) begin
         if (!trst_n)
             shift_reg <= '0;
-        else 
+      else if(enable)
             shift_reg <= {tdi_in, shift_reg[WIDTH-1:1]};
     end
 
