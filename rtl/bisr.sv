@@ -28,15 +28,18 @@ module bisr #(
     // Latch address/data on UPDATE_DR
     logic [$clog2(MEM_DEPTH)-1:0] latched_addr;
     logic [DATA_WIDTH-1:0]        latched_data;
-
+	logic latched_update;
+  
     always_ff @(posedge tck or negedge trst_n) begin
         if (!trst_n) begin
             latched_addr <= '0;
             latched_data <= '0;
+            latched_update <= 0;
         end else if (update_dr & enable) begin
             latched_addr <= addr_in;
             latched_data <= data_in;
         end
+      		latched_update <= update_dr;
     end
 
     // ---------------------------
@@ -49,7 +52,7 @@ module bisr #(
         .DEPTH(MEM_DEPTH)
     ) mem_inst (
         .clk      (tck),
-        .write_en (update_dr & enable),
+        .write_en (latched_update & enable),
         .addr     (latched_addr),
         .data_in  (latched_data),
         .data_out (mem_data_out)
