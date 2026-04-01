@@ -63,7 +63,7 @@ class bisr_monitor extends uvm_monitor;
          if(vif.cb_mon.TRST)
                 state = TEST_LOGIC_RESET;
             
-            if(state == SHIFT_IR)
+            if(state == SHIFT_IR && !vif.cb_mon.TMS)
               instr = {vif.cb_mon.TDI,instr[3:1]};
 
 
@@ -81,15 +81,14 @@ class bisr_monitor extends uvm_monitor;
 
                         
             if (state == CAPTURE_DR) begin
-              data_tdi <= '0;
-              data_tdo <= '0;
+              data_tdi = '0;
+              data_tdo = '0;
               dr_bits = 0;
             end
             else if (state == SHIFT_DR && !vif.cb_mon.TMS) begin
-              data_tdi <= {vif.cb_mon.TDI,data_tdi[30:0]};
-              data_tdo <= {data_tdo[31:1],vif.cb_mon.TDO};
-              
-              if(!vif.cb_mon.TMS)
+              data_tdi = {vif.cb_mon.TDI,data_tdi[31:1]};
+              data_tdo = {vif.cb_mon.TDO,data_tdo[31:1]};
+              $display("%0b", data_tdo);
               dr_bits++;
             end
             
@@ -106,10 +105,8 @@ class bisr_monitor extends uvm_monitor;
                 
                 bin_str = "";
 
-           
-                for (int i = dr_bits - 1; i >= 0; i--) begin
-                  bin_str = {bin_str, txn.data_tdi[32-i] ? "1" : "0"};
-            
+                for (int i = 31; i >= 32-dr_bits; i--) begin
+                    bin_str = {bin_str, txn.data_tdi[i] ? "1" : "0"};
                 end
 
                 `uvm_info("MON", $sformatf("Write DR observed: %s dr_bits: %d", bin_str, dr_bits), UVM_LOW)
@@ -117,8 +114,8 @@ class bisr_monitor extends uvm_monitor;
 
                 bin_str = "";
                 
-                for (int i = dr_bits - 1; i >= 0; i--) begin
-                  bin_str = {bin_str, txn.data_tdo[32-i] ? "1" : "0"};
+                for (int i = 31; i >= 32-dr_bits; i--) begin
+                  bin_str = {bin_str, txn.data_tdo[i] ? "1" : "0"};
                 end
 
                 `uvm_info("MON", $sformatf("Read DR observed: %s", bin_str) ,UVM_LOW);
