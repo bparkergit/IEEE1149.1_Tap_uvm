@@ -110,7 +110,7 @@ class bisr_monitor extends uvm_monitor;
 
 
                 
-                `uvm_info("MON", $sformatf("Write DR observed: %s dr_bits: %d", bin_str.atobin(), dr_bits), UVM_LOW)
+                `uvm_info("MON", $sformatf("Write DR observed: %0h dr_bits: %d", bin_str.atobin(), dr_bits), UVM_LOW)
 
 
                 bin_str = "";
