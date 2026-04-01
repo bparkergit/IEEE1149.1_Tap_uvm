@@ -51,8 +51,8 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
           wr_dr==1'b1;
           wr_ir==1'b0;
           rd_dr==1'b0; 
-          dr_bits==32;
-          data_tdi==32'hFFFFFFFF; }); // addr[7:0], data[7:0]
+          dr_bits==16;
+          data_tdi==16'hddFF; }); // addr[7:0], data[7:0]
         
         `uvm_info("SEQ", $sformatf("Write DR: data=%8h", item.data_tdi), UVM_MEDIUM) 
         
@@ -66,8 +66,8 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
           wr_dr==1'b1;
           wr_ir==1'b0;
           rd_dr==1'b1; 
-          dr_bits==32;
-          data_tdi==32'hFFFFFFFF;}); // addr[7:0], xxxxx
+          dr_bits==16;
+          data_tdi==16'hdd00;}); // addr[7:0], xxxxx
         
         `uvm_info("SEQ", $sformatf("Read DR: data_tdi=%8h", item.data_tdi), UVM_MEDIUM) 
         
