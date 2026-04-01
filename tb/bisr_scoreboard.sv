@@ -12,8 +12,8 @@
 
         
         virtual bisr_if vif;
-        bit [7:0] model_q[$];
-        bit [7:0] expected;
+        bit [31:0] model_q[$];
+        bit [31:0] expected;
   		int DEPTH = 16;
         
       
@@ -34,7 +34,7 @@
         // write function implementation    
         
         function void write(bisr_seq_item txn); 
-                      
+          
           if(txn.rd_dr) 
               if (model_q.size() == 0) 
                 `uvm_error("MODEL_UNDERFLOW","Model underflow")
@@ -42,18 +42,21 @@
                 begin
                    expected = model_q.pop_front();
 
-                  if (txn.data_tdo !== expected) 
-                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %8h Got %8h", expected, txn.data_tdo))
+                  if (txn.data_tdo[15:0] !== expected[31:16]) 
+                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %0h Got %0h", expected[31:16], txn.data_tdo[15:0]))
                   else 
-                    `uvm_info("MATCH",$sformatf("Matched %8h", txn.data_tdo), UVM_LOW);
+                    `uvm_info("MATCH",$sformatf("Matched %0h", txn.data_tdo[15:0]), UVM_LOW);
              
                 end
           
-          if(txn.wr_dr) 
+         
+          if(txn.wr_dr && txn.dr_bits == 16) // hard coded only save non sib writes
               if (model_q.size() == DEPTH) 
       			`uvm_error("MODEL_OVERFLOW","Model overflow")
-              else 
+              else begin
+                $display("pushing %0h", txn.data_tdi);
                 model_q.push_back(txn.data_tdi);
+              end
 
 
             
