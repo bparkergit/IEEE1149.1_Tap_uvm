@@ -100,7 +100,7 @@ module chip_top #(
         .tdi        (bisr_tdo_sib),     // chained from previous SIB
         .tdo        (mbist_tdo_sib),    // SIB output
 
-      .shift_dr   (shift_dr_mbist),
+      .shift_dr   (shift_dr_bisr),
         .capture_dr (capture_dr_mbist),
         .update_dr  (update_dr_mbist),
 
