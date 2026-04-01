@@ -104,13 +104,13 @@ class bisr_monitor extends uvm_monitor;
                 
                 bin_str = "";
 
-                for (int i = 15; i >= 16-dr_bits; i--) begin
+                for (int i = 31; i >= 32-dr_bits; i--) begin
                     bin_str = {bin_str, txn.data_tdi[i] ? "1" : "0"};
                 end
 
 
                 
-                `uvm_info("MON", $sformatf("Write DR observed: %0h dr_bits: %d", bin_str.atobin(), dr_bits), UVM_LOW)
+                `uvm_info("MON", $sformatf("Write DR observed: %s dr_bits: %d", bin_str.atobin(), dr_bits), UVM_LOW)
 
 
                 bin_str = "";
