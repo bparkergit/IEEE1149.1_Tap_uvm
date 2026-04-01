@@ -70,7 +70,7 @@ module tap_controller #(
             ir <= 4'b1111;  // BYPASS
         else if (state == CAPTURE_IR)
             ir <= 4'b0010;  // default USER_DR / BISR
-        else if (state == SHIFT_IR)
+      else if (state == SHIFT_IR && !TMS)
             ir <= {TDI, ir[IR_WIDTH-1:1]};
         else if (state == UPDATE_IR)
             ir_active <= ir;
