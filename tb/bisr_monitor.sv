@@ -87,7 +87,7 @@ class bisr_monitor extends uvm_monitor;
             end
             else if (state == SHIFT_DR && !vif.cb_mon.TMS) begin
               data_tdi = {vif.cb_mon.TDI,data_tdi[31:1]};
-              data_tdo = {vif.cb_mon.TDO,data_tdo[31:1]};
+              data_tdo = {data_tdo[30:0],vif.cb_mon.TDO};
               dr_bits++;
             end
             
@@ -104,7 +104,7 @@ class bisr_monitor extends uvm_monitor;
                 
                 bin_str = "";
 
-                for (int i = 31; i >= 32-dr_bits; i--) begin
+                for (int i = 15; i >= 16-dr_bits; i--) begin
                     bin_str = {bin_str, txn.data_tdi[i] ? "1" : "0"};
                 end
 
@@ -115,7 +115,7 @@ class bisr_monitor extends uvm_monitor;
 
                 bin_str = "";
                 
-                for (int i = 31; i >= 32-dr_bits; i--) begin
+                for (int i = 15; i >= 16-dr_bits; i--) begin
                   bin_str = {bin_str, txn.data_tdo[i] ? "1" : "0"};
                 end
 
