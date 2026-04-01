@@ -10,10 +10,13 @@ module tap_controller #(
     output logic [IR_WIDTH-1:0] ir_out,
 
     // DR control signals for each segment
-    output logic shift_dr,
-    output logic capture_dr,
-    output logic update_dr,
+    output logic shift_dr_bisr,
+    output logic capture_dr_bisr,
+    output logic update_dr_bisr,
 
+    output logic shift_dr_mbist,
+    output logic capture_dr_mbist,
+    output logic update_dr_mbist,
 
     // DR serial interface
     output logic tdi_dr,
@@ -78,10 +81,13 @@ module tap_controller #(
     // =================================================
     // DR control signals
     // =================================================
-    assign shift_dr   = (state == SHIFT_DR);
-    assign capture_dr = (state == CAPTURE_DR);
-    assign update_dr  = (state == UPDATE_DR);
+    assign shift_dr_bisr   = (state == SHIFT_DR)  && (ir_active == 4'b0010);
+    assign capture_dr_bisr = (state == CAPTURE_DR)&& (ir_active == 4'b0010);
+    assign update_dr_bisr  = (state == UPDATE_DR) && (ir_active == 4'b0010);
 
+    assign shift_dr_mbist   = (state == SHIFT_DR)  && (ir_active == 4'b0100);
+    assign capture_dr_mbist = (state == CAPTURE_DR)&& (ir_active == 4'b0100);
+    assign update_dr_mbist  = (state == UPDATE_DR) && (ir_active == 4'b0100);
 
     // =================================================
     // Bypass / DR mux
