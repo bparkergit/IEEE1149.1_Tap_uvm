@@ -77,6 +77,7 @@ module chip_top #(
         .tck        (TCK),
         .trst_n     (~TRST),
         .tdi        (bisr_tdi),
+        .tms		(TMS),
         .tdo        (bisr_tdo_child),   // ONLY drives child net
 
         .capture_dr (capture_dr_bisr),
