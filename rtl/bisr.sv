@@ -9,6 +9,7 @@ module bisr #(
     input  logic tck,
     input  logic trst_n,
     input  logic tdi,
+    input logic tms,
     output logic tdo,
     input  logic shift_dr,
     input  logic capture_dr,
@@ -67,7 +68,7 @@ module bisr #(
         else if (enable) begin
             if (capture_dr)
                 shift_reg <= {addr_in, mem_data_out};
-            else if (shift_dr)
+          else if (shift_dr && !tms)
                 shift_reg <= {tdi, shift_reg[DR_WIDTH-1:1]};
         end
     end
