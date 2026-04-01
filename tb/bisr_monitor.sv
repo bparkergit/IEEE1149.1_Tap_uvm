@@ -88,7 +88,6 @@ class bisr_monitor extends uvm_monitor;
             else if (state == SHIFT_DR && !vif.cb_mon.TMS) begin
               data_tdi = {vif.cb_mon.TDI,data_tdi[31:1]};
               data_tdo = {vif.cb_mon.TDO,data_tdo[31:1]};
-              $display("%0b", data_tdo);
               dr_bits++;
             end
             
