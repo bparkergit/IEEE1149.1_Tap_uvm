@@ -42,10 +42,10 @@
                 begin
                    expected = model_q.pop_front();
 
-                  if (txn.data_tdo[15:0] !== expected[31:16]) 
+                  if ({txn.data_tdo[7:0],txn.data_tdo[15:8]} !== expected[31:16]) 
                     `uvm_error("DATA_MISMATCH",$sformatf("Expected %0h Got %0h", expected[31:16], txn.data_tdo[15:0]))
                   else 
-                    `uvm_info("MATCH",$sformatf("Matched %0h", txn.data_tdo[15:0]), UVM_LOW);
+                    `uvm_info("MATCH",$sformatf("Matched %0h", {txn.data_tdo[7:0],txn.data_tdo[15:8]}), UVM_LOW);
              
                 end
           
