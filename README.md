@@ -15,7 +15,7 @@ UVM environment for verification of BISR controlled through ijtag featuring vari
 - `sib_bisr X sib_mbist`
     
 Functional coverage:
-
+88.88%
 
 ## Structure
 - `rtl/`       : DUT (chip_top.sv)
