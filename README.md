@@ -10,6 +10,9 @@ UVM environment for verification of BISR controlled through ijtag featuring vari
 - `wr_dr`    
 - `rd_dr`  
 - `instr`
+- `addr`
+- `rd_data`
+- `sib_bisr X sib_mbist`
     
 Functional coverage:
 
@@ -22,6 +25,7 @@ Functional coverage:
 ## Status
 - [X] DUT complete
 - [X] Basic UVM env
-- [ ] Coverage & scoreboard
+- [X] Coverage & scoreboard
+- [ ] BISR repair
 
 Tools: Questa/EDA Playground
