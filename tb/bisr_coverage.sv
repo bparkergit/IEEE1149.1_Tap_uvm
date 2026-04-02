@@ -37,22 +37,30 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
           bins sib_mbist_open = {1};
          }
          
-         data : coverpoint data_tdo[22:15] iff (dr_bits == 18) {
-           bins all_values[] = {[0:$]};  
-        // Alternative: fewer bins for better readability
+         rd_data : coverpoint data_tdo[22:15] iff (dr_bits == 18) {
+           bins low   = {[8'h00 : 8'h3F]};
+           bins mid1  = {[8'h40 : 8'h7F]};
+           bins mid2  = {[8'h80 : 8'hBF]};
+           bins high  = {[8'hC0 : 8'hFF]};
+        // fewer bins for better readability
         // bins range[16] = {[0:$]};     // distribute into 16 auto bins
 
     }
                   
          addr : coverpoint data_tdo[30:23] iff (dr_bits == 18) {
-      	  bins all_values[] = {[0:$]};     
-        // Alternative: fewer bins for better readability
+           bins low   = {[8'h00 : 8'h3F]};
+           bins mid1  = {[8'h40 : 8'h7F]};
+           bins mid2  = {[8'h80 : 8'hBF]};
+           bins high  = {[8'hC0 : 8'hFF]};   
+        // fewer bins for better readability
         // bins range[16] = {[0:$]};     // distribute into 16 auto bins
 
     }
          
          
-    	 coverpoint instr;
+         coverpoint instr {
+           bins IR_SIB = {4'b0011};
+         }
 
  
       endgroup
