@@ -27,12 +27,13 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
           bins high = {1};
     	}
 
-         coverpoint data_tdo[31] {
+         
+         sib_bisr : coverpoint data_tdo[31] {
           bins sib_bisr_closed  = {0};
           bins sib_bisr_open = {1};
          }
          
-         coverpoint data_tdo[32-dr_bits] {
+         sib_mbist : coverpoint data_tdo[32-dr_bits] {
           bins sib_mbist_closed  = {0};
           bins sib_mbist_open = {1};
          }
@@ -63,6 +64,8 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
          }
 
  
+         cross sib_bisr, sib_mbist;
+         
       endgroup
         
         
