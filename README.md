@@ -20,7 +20,6 @@ Functional coverage:
 ## Structure
 - `rtl/`       : DUT (chip_top.sv)
 - `tb/`        : UVM components (interface, package, top, tests)
-- `sim/`       : Scripts/Makefile for running simulations
 
 ## Status
 - [X] DUT complete
