@@ -1,12 +1,38 @@
+[2026-04-02 10:51:35 UTC] qrun -batch -access=rw+/. -uvmhome uvm-1.2 '-timescale' '1ns/1ns' -mfcu design.sv testbench.sv '-voptargs=+acc=npr' '+fcover' '-coverage' '-do' 'run.do'  -do  " run -all; exit"  
+QuestaSim-64 qrun 2025.2 Utility 2025.05 May 31 2025
+Start time: 06:51:36 on Apr 02,2026
+qrun -batch -access=rw+/. -uvmhome uvm-1.2 -timescale 1ns/1ns -mfcu design.sv testbench.sv -voptargs="+acc=npr" "+fcover" -coverage -do "run.do" -do " run -all; exit" 
+** Note: (qrun-220) 'modelsim.ini' is used as the ini file.
+Creating library 'qrun.out/work'.
+Mapping library 'mtiUvm' to 'qrun.out/work'.
+** Note: (vmap-220) 'modelsim.ini' is used as the ini file.
+QuestaSim-64 vlog 2025.2 Compiler 2025.05 May 31 2025
+Start time: 06:51:36 on Apr 02,2026
+vlog -timescale 1ns/1ns -mfcu -ccflags "-Wno-missing-declarations" -ccflags "-Wno-maybe-uninitialized" -ccflags "-Wno-return-type" -ccflags "-DQUESTA" /usr/share/questa/questasim/verilog_src/uvm-1.2/src/dpi/uvm_dpi.cc /usr/share/questa/questasim/verilog_src/uvm-1.2/src/uvm_pkg.sv /usr/share/questa/questasim/verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv design.sv testbench.sv -work qrun.out/work "+incdir+/usr/share/questa/questasim/verilog_src/uvm-1.2/src" -statslog qrun.out/stats_log -csession=incr 
+** Note: (vlog-220) 'modelsim.ini' is used as the ini file.
+-- Compiling package uvm_pkg (uvm-1.2 Built-in)
+-- Compiling package questa_uvm_pkg
+-- Importing package uvm_pkg (uvm-1.2 Built-in)
+-- Compiling module memory
+-- Compiling module dummy_mbist
+-- Compiling module bisr
+-- Compiling module sib
+-- Compiling module tap_controller
+-- Compiling module chip_top
+-- Compiling package uvm_pkg_sv_unit
+-- Importing package uvm_pkg (uvm-1.2 Built-in)
+-- Compiling interface bisr_if
+-- Compiling module bisr_tb_top
+
 Top level modules:
 	bisr_tb_top
 ** Note: (vlog-7082) For C/C++ auto compile, choosing compiler /usr/bin/g++ set from the PATH environment variable.
 -- Compiling DPI/PLI C++ file /usr/share/questa/questasim/verilog_src/uvm-1.2/src/dpi/uvm_dpi.cc
-End time: 04:05:00 on Apr 02,2026, Elapsed time: 0:00:04
+End time: 06:51:39 on Apr 02,2026, Elapsed time: 0:00:03
 Errors: 0, Warnings: 0
 QuestaSim-64 vopt 2025.2 Compiler 2025.05 May 31 2025
 ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility. The +acc switch would be deprecated in a future release.
-Start time: 04:05:00 on Apr 02,2026
+Start time: 06:51:39 on Apr 02,2026
 vopt -access=rw+/. -timescale 1ns/1ns -mfcu "+acc=npr" -findtoplevels qrun.out/work+2+ -work qrun.out/work -statslog qrun.out/stats_log -csession=incr -o qrun_opt -csessionid=3 
 ** Note: (vopt-220) 'modelsim.ini' is used as the ini file.
 
@@ -37,12 +63,12 @@ Optimizing 12 design-units (inlining 0/9 module instances):
 -- Optimizing module dummy_mbist(fast)
 -- Optimizing interface bisr_if(fast)
 Optimized design name is qrun_opt
-End time: 04:05:10 on Apr 02,2026, Elapsed time: 0:00:10
+End time: 06:51:46 on Apr 02,2026, Elapsed time: 0:00:07
 Errors: 0, Warnings: 1
 # ** Note: (vsim-220) 'modelsim.ini' is used as the ini file.
-# vsim -batch -lib qrun.out/work -do " run -all; exit" -statslog qrun.out/stats_log qrun_opt -appendlog -l qrun.log 
-# Start time: 04:05:10 on Apr 02,2026
-# Loading /tmp/root@7bf3c3dedde4_dpi_34/linux_x86_64_gcc-11/export_tramp.so
+# vsim -batch "+fcover" -lib qrun.out/work -do "coverage save -onexit cov_$Sv_Seed.ucdb" -do "run.do" -do " run -all; exit" -statslog qrun.out/stats_log qrun_opt -appendlog -l qrun.log 
+# Start time: 06:51:47 on Apr 02,2026
+# Loading /tmp/root@61f2c8d6ff6f_dpi_35/linux_x86_64_gcc-11/export_tramp.so
 # //  Questa Sim-64
 # //  Version 2025.2 linux_x86_64 May 31 2025
 # //
@@ -71,10 +97,11 @@ Errors: 0, Warnings: 1
 # Loading work.memory(fast)
 # Loading work.dummy_mbist(fast)
 # ** Note: (vsim-7082) For C/C++ auto compile, choosing compiler /usr/bin/g++ set from the PATH environment variable.
-# Compiling /tmp/root@7bf3c3dedde4_dpi_34/linux_x86_64_gcc-11/exportwrapper.c
-# Loading /tmp/root@7bf3c3dedde4_dpi_34/linux_x86_64_gcc-11/vsim_auto_compile.so
+# Compiling /tmp/root@61f2c8d6ff6f_dpi_35/linux_x86_64_gcc-11/exportwrapper.c
+# Loading /tmp/root@61f2c8d6ff6f_dpi_35/linux_x86_64_gcc-11/vsim_auto_compile.so
 # 
-# run -all
+# coverage save -onexit cov_$Sv_Seed.ucdb
+# do run.do
 # UVM_INFO /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_root.svh(392) @ 0: reporter [UVM/RELNOTES] 
 # ----------------------------------------------------------------
 # UVM-1.2
@@ -127,56 +154,246 @@ Errors: 0, Warnings: 1
 # --------------------------------------------------------------
 # 
 # UVM_INFO bisr_base_test.sv(29) @ 0: uvm_test_top [bisr_base_test] Starting bisr_base_sequence
-# UVM_INFO bisr_base_sequence.sv(27) @ 0: uvm_test_top.env.agent.sqr@@seq [SEQ] Write IR: instr=0011
-# UVM_INFO bisr_scoreboard.sv(73) @ 20000: uvm_test_top.env.scoreboard [RESET] Scoreboard model cleared
+# UVM_INFO bisr_base_sequence.sv(30) @ 0: uvm_test_top.env.agent.sqr@@seq [SEQ] Write IR: instr=0011
+# UVM_INFO bisr_scoreboard.sv(72) @ 20000: uvm_test_top.env.scoreboard [RESET] Scoreboard model cleared
 # UVM_INFO bisr_monitor.sv(79) @ 165000: uvm_test_top.env.agent.mon [MON] Write IR observed: 0011
-# UVM_INFO bisr_base_sequence.sv(42) @ 165000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: data=10
+# UVM_INFO bisr_base_sequence.sv(47) @ 165000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: data=11010001010100100110000001111010
 # UVM_ERROR bisr_scoreboard.sv(40) @ 305000: uvm_test_top.env.scoreboard [MODEL_UNDERFLOW] Model underflow
 # UVM_INFO bisr_monitor.sv(114) @ 305000: uvm_test_top.env.agent.mon [MON] Write DR observed: 2 dr_bits:           2
 # UVM_INFO bisr_monitor.sv(123) @ 305000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
-# UVM_INFO bisr_base_sequence.sv(57) @ 305000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=33 data=ac
+# UVM_INFO bisr_base_sequence.sv(72) @ 305000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=f8 data=9a
 # UVM_ERROR bisr_scoreboard.sv(40) @ 605000: uvm_test_top.env.scoreboard [MODEL_UNDERFLOW] Model underflow
-# UVM_INFO bisr_monitor.sv(114) @ 605000: uvm_test_top.env.agent.mon [MON] Write DR observed: 26758 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(114) @ 605000: uvm_test_top.env.agent.mon [MON] Write DR observed: 3f134 dr_bits:          18
 # UVM_INFO bisr_monitor.sv(123) @ 605000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
-# UVM_INFO bisr_base_sequence.sv(72) @ 605000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=33
-# UVM_INFO bisr_scoreboard.sv(48) @ 905000: uvm_test_top.env.scoreboard [MATCH] Matched ac
-# UVM_INFO bisr_monitor.sv(114) @ 905000: uvm_test_top.env.agent.mon [MON] Write DR observed: 26600 dr_bits:          18
+# UVM_INFO bisr_base_sequence.sv(91) @ 605000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=f8
+# UVM_INFO bisr_scoreboard.sv(47) @ 905000: uvm_test_top.env.scoreboard [MATCH] Matched 9a
+# UVM_INFO bisr_monitor.sv(114) @ 905000: uvm_test_top.env.agent.mon [MON] Write DR observed: 3f176 dr_bits:          18
 # UVM_INFO bisr_monitor.sv(123) @ 905000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
-# UVM_INFO bisr_base_sequence.sv(88) @ 905000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=a2 data=2c
-# UVM_INFO bisr_scoreboard.sv(48) @ 1205000: uvm_test_top.env.scoreboard [MATCH] Matched 00
-# UVM_INFO bisr_monitor.sv(114) @ 1205000: uvm_test_top.env.agent.mon [MON] Write DR observed: 34458 dr_bits:          18
-# UVM_INFO bisr_monitor.sv(123) @ 1205000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
-# UVM_INFO bisr_base_sequence.sv(103) @ 1205000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=a2
-# UVM_INFO bisr_scoreboard.sv(48) @ 1505000: uvm_test_top.env.scoreboard [MATCH] Matched 2c
-# UVM_INFO bisr_monitor.sv(114) @ 1505000: uvm_test_top.env.agent.mon [MON] Write DR observed: 34400 dr_bits:          18
-# UVM_INFO bisr_monitor.sv(123) @ 1505000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
-# UVM_INFO /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_objection.svh(1270) @ 2505000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
-# UVM_INFO /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_report_server.svh(847) @ 2505000: reporter [UVM/REPORT/SERVER] 
+# UVM_INFO bisr_base_sequence.sv(72) @ 905000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=fa data=13
+# UVM_INFO bisr_scoreboard.sv(47) @ 1205000: uvm_test_top.env.scoreboard [MATCH] Matched bb
+# UVM_INFO bisr_monitor.sv(114) @ 1205000: uvm_test_top.env.agent.mon [MON] Write DR observed: 3f426 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 1205000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(91) @ 1205000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=fa
+# UVM_INFO bisr_scoreboard.sv(47) @ 1505000: uvm_test_top.env.scoreboard [MATCH] Matched 13
+# UVM_INFO bisr_monitor.sv(114) @ 1505000: uvm_test_top.env.agent.mon [MON] Write DR observed: 3f594 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 1505000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(72) @ 1505000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=53 data=12
+# UVM_INFO bisr_scoreboard.sv(47) @ 1805000: uvm_test_top.env.scoreboard [MATCH] Matched ca
+# UVM_INFO bisr_monitor.sv(114) @ 1805000: uvm_test_top.env.agent.mon [MON] Write DR observed: 2a624 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 1805000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
+# UVM_INFO bisr_base_sequence.sv(91) @ 1805000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=53
+# UVM_INFO bisr_scoreboard.sv(47) @ 2105000: uvm_test_top.env.scoreboard [MATCH] Matched 12
+# UVM_INFO bisr_monitor.sv(114) @ 2105000: uvm_test_top.env.agent.mon [MON] Write DR observed: 2a7d8 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 2105000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
+# UVM_INFO bisr_base_sequence.sv(72) @ 2105000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=a1 data=cb
+# UVM_INFO bisr_scoreboard.sv(47) @ 2405000: uvm_test_top.env.scoreboard [MATCH] Matched ec
+# UVM_INFO bisr_monitor.sv(114) @ 2405000: uvm_test_top.env.agent.mon [MON] Write DR observed: 34396 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 2405000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
+# UVM_INFO bisr_base_sequence.sv(91) @ 2405000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=a1
+# UVM_INFO bisr_scoreboard.sv(47) @ 2705000: uvm_test_top.env.scoreboard [MATCH] Matched cb
+# UVM_INFO bisr_monitor.sv(114) @ 2705000: uvm_test_top.env.agent.mon [MON] Write DR observed: 342d8 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 2705000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(72) @ 2705000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=be data=83
+# UVM_INFO bisr_scoreboard.sv(47) @ 3005000: uvm_test_top.env.scoreboard [MATCH] Matched 6c
+# UVM_INFO bisr_monitor.sv(114) @ 3005000: uvm_test_top.env.agent.mon [MON] Write DR observed: 37d06 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 3005000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
+# UVM_INFO bisr_base_sequence.sv(91) @ 3005000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=be
+# UVM_INFO bisr_scoreboard.sv(47) @ 3305000: uvm_test_top.env.scoreboard [MATCH] Matched 83
+# UVM_INFO bisr_monitor.sv(114) @ 3305000: uvm_test_top.env.agent.mon [MON] Write DR observed: 37cea dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 3305000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(72) @ 3305000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=a4 data=99
+# UVM_INFO bisr_scoreboard.sv(47) @ 3605000: uvm_test_top.env.scoreboard [MATCH] Matched 75
+# UVM_INFO bisr_monitor.sv(114) @ 3605000: uvm_test_top.env.agent.mon [MON] Write DR observed: 34932 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 3605000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(91) @ 3605000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=a4
+# UVM_INFO bisr_scoreboard.sv(47) @ 3905000: uvm_test_top.env.scoreboard [MATCH] Matched 99
+# UVM_INFO bisr_monitor.sv(114) @ 3905000: uvm_test_top.env.agent.mon [MON] Write DR observed: 348b0 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 3905000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(72) @ 3905000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=a5 data=71
+# UVM_INFO bisr_scoreboard.sv(47) @ 4205000: uvm_test_top.env.scoreboard [MATCH] Matched 58
+# UVM_INFO bisr_monitor.sv(114) @ 4205000: uvm_test_top.env.agent.mon [MON] Write DR observed: 34ae2 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 4205000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
+# UVM_INFO bisr_base_sequence.sv(91) @ 4205000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=a5
+# UVM_INFO bisr_scoreboard.sv(47) @ 4505000: uvm_test_top.env.scoreboard [MATCH] Matched 71
+# UVM_INFO bisr_monitor.sv(114) @ 4505000: uvm_test_top.env.agent.mon [MON] Write DR observed: 34a3a dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 4505000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(72) @ 4505000: uvm_test_top.env.agent.sqr@@seq [SEQ] Write DR: addr=7a data=00
+# UVM_INFO bisr_scoreboard.sv(47) @ 4805000: uvm_test_top.env.scoreboard [MATCH] Matched 1d
+# UVM_INFO bisr_monitor.sv(114) @ 4805000: uvm_test_top.env.agent.mon [MON] Write DR observed: 2f400 dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 4805000: uvm_test_top.env.agent.mon [MON] Read DR observed: 20000
+# UVM_INFO bisr_base_sequence.sv(91) @ 4805000: uvm_test_top.env.agent.sqr@@seq [SEQ] Read DR: addr=7a
+# UVM_INFO bisr_scoreboard.sv(47) @ 5105000: uvm_test_top.env.scoreboard [MATCH] Matched 00
+# UVM_INFO bisr_monitor.sv(114) @ 5105000: uvm_test_top.env.agent.mon [MON] Write DR observed: 2f5ac dr_bits:          18
+# UVM_INFO bisr_monitor.sv(123) @ 5105000: uvm_test_top.env.agent.mon [MON] Read DR observed: 0
+# UVM_INFO /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_objection.svh(1270) @ 6105000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+# UVM_INFO /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_report_server.svh(847) @ 6105000: reporter [UVM/REPORT/SERVER] 
 # --- UVM Report Summary ---
 # 
 # ** Report counts by severity
-# UVM_INFO :   28
+# UVM_INFO :   76
 # UVM_WARNING :    0
 # UVM_ERROR :    2
 # UVM_FATAL :    0
 # ** Report counts by id
-# [MATCH]     3
+# [MATCH]    15
 # [MODEL_UNDERFLOW]     2
-# [MON]    11
+# [MON]    35
 # [Questa UVM]     2
 # [RESET]     1
 # [RNTST]     1
-# [SEQ]     6
+# [SEQ]    18
 # [TEST_DONE]     1
 # [UVM/RELNOTES]     1
 # [UVMTOP]     1
 # [bisr_base_test]     1
 # 
 # ** Note: $finish    : /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_root.svh(517)
-#    Time: 2505 ns  Iteration: 68  Instance: /bisr_tb_top
-# End time: 04:05:13 on Apr 02,2026, Elapsed time: 0:00:03
+#    Time: 6105 ns  Iteration: 68  Instance: /bisr_tb_top
+# Break in Task uvm_root::run_test at /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_root.svh line 517
+# Stopped at /usr/share/questa/questasim/verilog_src/uvm-1.2/src/base/uvm_root.svh line 517
+# Coverage Report by instance with details
+# 
+# =================================================================================
+# === Instance: /uvm_pkg_sv_unit
+# === Design Unit: work.uvm_pkg_sv_unit
+# =================================================================================
+# 
+# Covergroup Coverage:
+#     Covergroups                      1        na        na    93.75%
+#         Coverpoints/Crosses          8        na        na        na
+#             Covergroup Bins         19        18         1    94.73%
+# ----------------------------------------------------------------------------------------------------------
+# Covergroup                                             Metric       Goal       Bins    Status               
+#                                                                                                          
+# ----------------------------------------------------------------------------------------------------------
+#  TYPE /uvm_pkg_sv_unit/bisr_coverage/cg_transaction 
+#                                                        93.75%        100          -    Uncovered            
+#     covered/total bins:                                    18         19          -                      
+#     missing/total bins:                                     1         19          -                      
+#     % Hit:                                             94.73%        100          -                      
+#     Coverpoint wr_ir                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                            17          1          -    Covered              
+#         bin high                                            1          1          -    Covered              
+#     Coverpoint wr_dr                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             1          1          -    Covered              
+#         bin high                                           17          1          -    Covered              
+#     Coverpoint rd_dr                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             1          1          -    Covered              
+#         bin high                                           17          1          -    Covered              
+#     Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin sib_bisr_closed                                 2          1          -    Covered              
+#         bin sib_bisr_open                                  16          1          -    Covered              
+#     Coverpoint #coverpoint__1#                         50.00%        100          -    Uncovered            
+#         covered/total bins:                                 1          2          -                      
+#         missing/total bins:                                 1          2          -                      
+#         % Hit:                                         50.00%        100          -                      
+#         bin sib_mbist_closed                               18          1          -    Covered              
+#         bin sib_mbist_open                                  0          1          -    ZERO                 
+#     Coverpoint rd_data                                100.00%        100          -    Covered              
+#         covered/total bins:                                 4          4          -                      
+#         missing/total bins:                                 0          4          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             5          1          -    Covered              
+#         bin mid1                                            4          1          -    Covered              
+#         bin mid2                                            4          1          -    Covered              
+#         bin high                                            3          1          -    Covered              
+#     Coverpoint addr                                   100.00%        100          -    Covered              
+#         covered/total bins:                                 4          4          -                      
+#         missing/total bins:                                 0          4          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             1          1          -    Covered              
+#         bin mid1                                            3          1          -    Covered              
+#         bin mid2                                            8          1          -    Covered              
+#         bin high                                            4          1          -    Covered              
+#     Coverpoint instr                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 1          1          -                      
+#         missing/total bins:                                 0          1          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin IR_SIB                                          1          1          -    Covered              
+# 
+# COVERGROUP COVERAGE:
+# ----------------------------------------------------------------------------------------------------------
+# Covergroup                                             Metric       Goal       Bins    Status               
+#                                                                                                          
+# ----------------------------------------------------------------------------------------------------------
+#  TYPE /uvm_pkg_sv_unit/bisr_coverage/cg_transaction 
+#                                                        93.75%        100          -    Uncovered            
+#     covered/total bins:                                    18         19          -                      
+#     missing/total bins:                                     1         19          -                      
+#     % Hit:                                             94.73%        100          -                      
+#     Coverpoint wr_ir                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                            17          1          -    Covered              
+#         bin high                                            1          1          -    Covered              
+#     Coverpoint wr_dr                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             1          1          -    Covered              
+#         bin high                                           17          1          -    Covered              
+#     Coverpoint rd_dr                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             1          1          -    Covered              
+#         bin high                                           17          1          -    Covered              
+#     Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+#         covered/total bins:                                 2          2          -                      
+#         missing/total bins:                                 0          2          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin sib_bisr_closed                                 2          1          -    Covered              
+#         bin sib_bisr_open                                  16          1          -    Covered              
+#     Coverpoint #coverpoint__1#                         50.00%        100          -    Uncovered            
+#         covered/total bins:                                 1          2          -                      
+#         missing/total bins:                                 1          2          -                      
+#         % Hit:                                         50.00%        100          -                      
+#         bin sib_mbist_closed                               18          1          -    Covered              
+#         bin sib_mbist_open                                  0          1          -    ZERO                 
+#     Coverpoint rd_data                                100.00%        100          -    Covered              
+#         covered/total bins:                                 4          4          -                      
+#         missing/total bins:                                 0          4          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             5          1          -    Covered              
+#         bin mid1                                            4          1          -    Covered              
+#         bin mid2                                            4          1          -    Covered              
+#         bin high                                            3          1          -    Covered              
+#     Coverpoint addr                                   100.00%        100          -    Covered              
+#         covered/total bins:                                 4          4          -                      
+#         missing/total bins:                                 0          4          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin low                                             1          1          -    Covered              
+#         bin mid1                                            3          1          -    Covered              
+#         bin mid2                                            8          1          -    Covered              
+#         bin high                                            4          1          -    Covered              
+#     Coverpoint instr                                  100.00%        100          -    Covered              
+#         covered/total bins:                                 1          1          -                      
+#         missing/total bins:                                 0          1          -                      
+#         % Hit:                                        100.00%        100          -                      
+#         bin IR_SIB                                          1          1          -    Covered              
+# 
+# TOTAL COVERGROUP COVERAGE: 93.75%  COVERGROUP TYPES: 1
+# 
+# Total Coverage By Instance (filtered view): 93.75%
+# 
+# 
+# Saving coverage database on exit...
+# End time: 06:51:49 on Apr 02,2026, Elapsed time: 0:00:02
 # Errors: 0, Warnings: 0
-End time: 04:05:13 on Apr 02,2026, Elapsed time: 0:00:17
+End time: 06:51:49 on Apr 02,2026, Elapsed time: 0:00:13
 *** Summary *********************************************
     qrun: Errors:   0, Warnings:   0
     vlog: Errors:   0, Warnings:   0
