@@ -18,11 +18,18 @@ module tap_controller #(
     output logic capture_dr_mbist,
     output logic update_dr_mbist,
 
+    output logic shift_dr_sib,
+    output logic capture_dr_sib,
+    output logic update_dr_sib,
     // DR serial interface
     output logic tdi_dr,
     input  logic tdo_dr
 );
 
+  localparam IR_BISR = 4'b0010;
+  localparam IR_MBIST = 4'b0100;
+  localparam IR_SIB = 4'b0011;  
+  
     typedef enum logic [3:0] {
         TEST_LOGIC_RESET, RUN_TEST_IDLE, SELECT_DR_SCAN,
         CAPTURE_DR, SHIFT_DR, EXIT1_DR, PAUSE_DR, EXIT2_DR, UPDATE_DR,
@@ -89,6 +96,10 @@ module tap_controller #(
     assign capture_dr_mbist = (state == CAPTURE_DR)&& (ir_active == 4'b0100);
     assign update_dr_mbist  = (state == UPDATE_DR) && (ir_active == 4'b0100);
 
+    assign shift_dr_sib   = (state == SHIFT_DR)  && (ir_active == IR_SIB);
+    assign capture_dr_sib = (state == CAPTURE_DR)&& (ir_active == IR_SIB);
+    assign update_dr_sib  = (state == UPDATE_DR) && (ir_active == IR_SIB);
+  
     // =================================================
     // Bypass / DR mux
     // =================================================
