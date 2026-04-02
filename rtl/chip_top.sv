@@ -20,8 +20,7 @@ module chip_top #(
     // TAP controller
     // ============================================================
     logic shift_dr_sib, capture_dr_sib, update_dr_sib;
-    logic shift_dr_bisr, capture_dr_bisr, update_dr_bisr;
-    logic shift_dr_mbist, capture_dr_mbist, update_dr_mbist;
+
     logic [3:0] ir_out;
 
     logic tdi_dr;
@@ -38,14 +37,6 @@ module chip_top #(
         .shift_dr_sib  (shift_dr_sib),
         .capture_dr_sib(capture_dr_sib),
         .update_dr_sib (update_dr_sib),
-      
-        .shift_dr_bisr  (shift_dr_bisr),
-        .capture_dr_bisr(capture_dr_bisr),
-        .update_dr_bisr (update_dr_bisr),
-
-        .shift_dr_mbist (shift_dr_mbist),
-        .capture_dr_mbist(capture_dr_mbist),
-        .update_dr_mbist(update_dr_mbist),
 
         .tdi_dr         (tdi_dr),
         .tdo_dr         (tdo_chain)   // comes back from chain
@@ -64,11 +55,12 @@ module chip_top #(
         .trst_n     (~TRST),
         .tdi        (tdi_dr),
         .tdo        (bisr_tdo_sib),     // SIB output
-
+        .tms		(TMS),
+      
         .shift_dr   (shift_dr_sib),
         .capture_dr (capture_dr_sib),
         .update_dr  (update_dr_sib),
-
+      
         .child_tdi  (bisr_tdi),
         .child_tdo  (bisr_tdo_child),   // from BISR
 
@@ -85,9 +77,9 @@ module chip_top #(
         .tms		(TMS),
         .tdo        (bisr_tdo_child),   // ONLY drives child net
 
-        .capture_dr (capture_dr_bisr),
-        .shift_dr   (shift_dr_bisr),
-        .update_dr  (update_dr_bisr),
+        .shift_dr   (shift_dr_sib),
+      .capture_dr (capture_dr_sib),
+      .update_dr  (update_dr_sib),
 
         .enable     (bisr_enable)
     );
@@ -105,11 +97,12 @@ module chip_top #(
         .trst_n     (~TRST),
         .tdi        (bisr_tdo_sib),     // chained from previous SIB
         .tdo        (mbist_tdo_sib),    // SIB output
-
+        .tms		(TMS),
+      
         .shift_dr   (shift_dr_sib),
         .capture_dr (capture_dr_sib),
         .update_dr  (update_dr_sib),
-
+      
         .child_tdi  (mbist_tdi),
         .child_tdo  (mbist_tdo_child),
 
