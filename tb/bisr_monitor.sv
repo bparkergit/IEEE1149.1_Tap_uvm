@@ -100,6 +100,7 @@ class bisr_monitor extends uvm_monitor;
                 txn.data_tdi = data_tdi;
                 txn.data_tdo = data_tdo;
                 txn.dr_bits = dr_bits;
+
                 ap.write(txn);     
                 
                 bin_str = "";
@@ -110,7 +111,7 @@ class bisr_monitor extends uvm_monitor;
 
 
                 
-                `uvm_info("MON", $sformatf("Write DR observed: %0h dr_bits: %d", bin_str.atobin(), dr_bits), UVM_LOW)
+                `uvm_info("MON", $sformatf("Write DR observed: %0b dr_bits: %d", bin_str.atobin(), dr_bits), UVM_LOW)
 
 
                 bin_str = "";
