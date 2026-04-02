@@ -54,7 +54,6 @@
               if (model_q.size() == DEPTH) 
       			`uvm_error("MODEL_OVERFLOW","Model overflow")
               else begin
-                $display("pushing %0b", txn.data_tdi);
                 model_q.push_back(txn.data_tdi);
               end
 
