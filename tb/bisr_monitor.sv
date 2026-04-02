@@ -87,7 +87,7 @@ class bisr_monitor extends uvm_monitor;
             end
             else if (state == SHIFT_DR && !vif.cb_mon.TMS) begin
               data_tdi = {vif.cb_mon.TDI,data_tdi[31:1]};
-              data_tdo = {data_tdo[30:0],vif.cb_mon.TDO};
+              data_tdo = {vif.cb_mon.TDO,data_tdo[31:1]};
               dr_bits++;
             end
             
