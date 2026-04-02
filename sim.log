@@ -1,13 +1,13 @@
-[2026-04-02 10:51:35 UTC] qrun -batch -access=rw+/. -uvmhome uvm-1.2 '-timescale' '1ns/1ns' -mfcu design.sv testbench.sv '-voptargs=+acc=npr' '+fcover' '-coverage' '-do' 'run.do'  -do  " run -all; exit"  
+[2026-04-02 11:00:18 UTC] qrun -batch -access=rw+/. -uvmhome uvm-1.2 '-timescale' '1ns/1ns' -mfcu design.sv testbench.sv '-voptargs=+acc=npr' '+fcover' '-coverage' '-do' 'run.do'  -do  " run -all; exit"  
 QuestaSim-64 qrun 2025.2 Utility 2025.05 May 31 2025
-Start time: 06:51:36 on Apr 02,2026
+Start time: 07:00:19 on Apr 02,2026
 qrun -batch -access=rw+/. -uvmhome uvm-1.2 -timescale 1ns/1ns -mfcu design.sv testbench.sv -voptargs="+acc=npr" "+fcover" -coverage -do "run.do" -do " run -all; exit" 
 ** Note: (qrun-220) 'modelsim.ini' is used as the ini file.
 Creating library 'qrun.out/work'.
 Mapping library 'mtiUvm' to 'qrun.out/work'.
 ** Note: (vmap-220) 'modelsim.ini' is used as the ini file.
 QuestaSim-64 vlog 2025.2 Compiler 2025.05 May 31 2025
-Start time: 06:51:36 on Apr 02,2026
+Start time: 07:00:19 on Apr 02,2026
 vlog -timescale 1ns/1ns -mfcu -ccflags "-Wno-missing-declarations" -ccflags "-Wno-maybe-uninitialized" -ccflags "-Wno-return-type" -ccflags "-DQUESTA" /usr/share/questa/questasim/verilog_src/uvm-1.2/src/dpi/uvm_dpi.cc /usr/share/questa/questasim/verilog_src/uvm-1.2/src/uvm_pkg.sv /usr/share/questa/questasim/verilog_src/questa_uvm_pkg-1.2/src/questa_uvm_pkg.sv design.sv testbench.sv -work qrun.out/work "+incdir+/usr/share/questa/questasim/verilog_src/uvm-1.2/src" -statslog qrun.out/stats_log -csession=incr 
 ** Note: (vlog-220) 'modelsim.ini' is used as the ini file.
 -- Compiling package uvm_pkg (uvm-1.2 Built-in)
@@ -28,11 +28,11 @@ Top level modules:
 	bisr_tb_top
 ** Note: (vlog-7082) For C/C++ auto compile, choosing compiler /usr/bin/g++ set from the PATH environment variable.
 -- Compiling DPI/PLI C++ file /usr/share/questa/questasim/verilog_src/uvm-1.2/src/dpi/uvm_dpi.cc
-End time: 06:51:39 on Apr 02,2026, Elapsed time: 0:00:03
+End time: 07:00:23 on Apr 02,2026, Elapsed time: 0:00:04
 Errors: 0, Warnings: 0
 QuestaSim-64 vopt 2025.2 Compiler 2025.05 May 31 2025
 ** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility. The +acc switch would be deprecated in a future release.
-Start time: 06:51:39 on Apr 02,2026
+Start time: 07:00:23 on Apr 02,2026
 vopt -access=rw+/. -timescale 1ns/1ns -mfcu "+acc=npr" -findtoplevels qrun.out/work+2+ -work qrun.out/work -statslog qrun.out/stats_log -csession=incr -o qrun_opt -csessionid=3 
 ** Note: (vopt-220) 'modelsim.ini' is used as the ini file.
 
@@ -63,12 +63,12 @@ Optimizing 12 design-units (inlining 0/9 module instances):
 -- Optimizing module dummy_mbist(fast)
 -- Optimizing interface bisr_if(fast)
 Optimized design name is qrun_opt
-End time: 06:51:46 on Apr 02,2026, Elapsed time: 0:00:07
+End time: 07:00:33 on Apr 02,2026, Elapsed time: 0:00:10
 Errors: 0, Warnings: 1
 # ** Note: (vsim-220) 'modelsim.ini' is used as the ini file.
 # vsim -batch "+fcover" -lib qrun.out/work -do "coverage save -onexit cov_$Sv_Seed.ucdb" -do "run.do" -do " run -all; exit" -statslog qrun.out/stats_log qrun_opt -appendlog -l qrun.log 
-# Start time: 06:51:47 on Apr 02,2026
-# Loading /tmp/root@61f2c8d6ff6f_dpi_35/linux_x86_64_gcc-11/export_tramp.so
+# Start time: 07:00:33 on Apr 02,2026
+# Loading /tmp/root@6011053373da_dpi_34/linux_x86_64_gcc-11/export_tramp.so
 # //  Questa Sim-64
 # //  Version 2025.2 linux_x86_64 May 31 2025
 # //
@@ -97,8 +97,8 @@ Errors: 0, Warnings: 1
 # Loading work.memory(fast)
 # Loading work.dummy_mbist(fast)
 # ** Note: (vsim-7082) For C/C++ auto compile, choosing compiler /usr/bin/g++ set from the PATH environment variable.
-# Compiling /tmp/root@61f2c8d6ff6f_dpi_35/linux_x86_64_gcc-11/exportwrapper.c
-# Loading /tmp/root@61f2c8d6ff6f_dpi_35/linux_x86_64_gcc-11/vsim_auto_compile.so
+# Compiling /tmp/root@6011053373da_dpi_34/linux_x86_64_gcc-11/exportwrapper.c
+# Loading /tmp/root@6011053373da_dpi_34/linux_x86_64_gcc-11/vsim_auto_compile.so
 # 
 # coverage save -onexit cov_$Sv_Seed.ucdb
 # do run.do
@@ -259,18 +259,18 @@ Errors: 0, Warnings: 1
 # =================================================================================
 # 
 # Covergroup Coverage:
-#     Covergroups                      1        na        na    93.75%
-#         Coverpoints/Crosses          8        na        na        na
-#             Covergroup Bins         19        18         1    94.73%
+#     Covergroups                      1        na        na    88.88%
+#         Coverpoints/Crosses          9        na        na        na
+#             Covergroup Bins         23        20         3    86.95%
 # ----------------------------------------------------------------------------------------------------------
 # Covergroup                                             Metric       Goal       Bins    Status               
 #                                                                                                          
 # ----------------------------------------------------------------------------------------------------------
 #  TYPE /uvm_pkg_sv_unit/bisr_coverage/cg_transaction 
-#                                                        93.75%        100          -    Uncovered            
-#     covered/total bins:                                    18         19          -                      
-#     missing/total bins:                                     1         19          -                      
-#     % Hit:                                             94.73%        100          -                      
+#                                                        88.88%        100          -    Uncovered            
+#     covered/total bins:                                    20         23          -                      
+#     missing/total bins:                                     3         23          -                      
+#     % Hit:                                             86.95%        100          -                      
 #     Coverpoint wr_ir                                  100.00%        100          -    Covered              
 #         covered/total bins:                                 2          2          -                      
 #         missing/total bins:                                 0          2          -                      
@@ -289,13 +289,13 @@ Errors: 0, Warnings: 1
 #         % Hit:                                        100.00%        100          -                      
 #         bin low                                             1          1          -    Covered              
 #         bin high                                           17          1          -    Covered              
-#     Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+#     Coverpoint sib_bisr                               100.00%        100          -    Covered              
 #         covered/total bins:                                 2          2          -                      
 #         missing/total bins:                                 0          2          -                      
 #         % Hit:                                        100.00%        100          -                      
 #         bin sib_bisr_closed                                 2          1          -    Covered              
 #         bin sib_bisr_open                                  16          1          -    Covered              
-#     Coverpoint #coverpoint__1#                         50.00%        100          -    Uncovered            
+#     Coverpoint sib_mbist                               50.00%        100          -    Uncovered            
 #         covered/total bins:                                 1          2          -                      
 #         missing/total bins:                                 1          2          -                      
 #         % Hit:                                         50.00%        100          -                      
@@ -322,6 +322,14 @@ Errors: 0, Warnings: 1
 #         missing/total bins:                                 0          1          -                      
 #         % Hit:                                        100.00%        100          -                      
 #         bin IR_SIB                                          1          1          -    Covered              
+#     Cross #cross__0#                                   50.00%        100          -    Uncovered            
+#         covered/total bins:                                 2          4          -                      
+#         missing/total bins:                                 2          4          -                      
+#         % Hit:                                         50.00%        100          -                      
+#         Auto, Default and User Defined Bins:
+#             bin <sib_bisr_open,sib_mbist_closed>           16          1          -    Covered              
+#             bin <sib_bisr_closed,sib_mbist_closed>          2          1          -    Covered              
+#             bin <*,sib_mbist_open>                          0          1          2    ZERO                 
 # 
 # COVERGROUP COVERAGE:
 # ----------------------------------------------------------------------------------------------------------
@@ -329,10 +337,10 @@ Errors: 0, Warnings: 1
 #                                                                                                          
 # ----------------------------------------------------------------------------------------------------------
 #  TYPE /uvm_pkg_sv_unit/bisr_coverage/cg_transaction 
-#                                                        93.75%        100          -    Uncovered            
-#     covered/total bins:                                    18         19          -                      
-#     missing/total bins:                                     1         19          -                      
-#     % Hit:                                             94.73%        100          -                      
+#                                                        88.88%        100          -    Uncovered            
+#     covered/total bins:                                    20         23          -                      
+#     missing/total bins:                                     3         23          -                      
+#     % Hit:                                             86.95%        100          -                      
 #     Coverpoint wr_ir                                  100.00%        100          -    Covered              
 #         covered/total bins:                                 2          2          -                      
 #         missing/total bins:                                 0          2          -                      
@@ -351,13 +359,13 @@ Errors: 0, Warnings: 1
 #         % Hit:                                        100.00%        100          -                      
 #         bin low                                             1          1          -    Covered              
 #         bin high                                           17          1          -    Covered              
-#     Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+#     Coverpoint sib_bisr                               100.00%        100          -    Covered              
 #         covered/total bins:                                 2          2          -                      
 #         missing/total bins:                                 0          2          -                      
 #         % Hit:                                        100.00%        100          -                      
 #         bin sib_bisr_closed                                 2          1          -    Covered              
 #         bin sib_bisr_open                                  16          1          -    Covered              
-#     Coverpoint #coverpoint__1#                         50.00%        100          -    Uncovered            
+#     Coverpoint sib_mbist                               50.00%        100          -    Uncovered            
 #         covered/total bins:                                 1          2          -                      
 #         missing/total bins:                                 1          2          -                      
 #         % Hit:                                         50.00%        100          -                      
@@ -384,16 +392,24 @@ Errors: 0, Warnings: 1
 #         missing/total bins:                                 0          1          -                      
 #         % Hit:                                        100.00%        100          -                      
 #         bin IR_SIB                                          1          1          -    Covered              
+#     Cross #cross__0#                                   50.00%        100          -    Uncovered            
+#         covered/total bins:                                 2          4          -                      
+#         missing/total bins:                                 2          4          -                      
+#         % Hit:                                         50.00%        100          -                      
+#         Auto, Default and User Defined Bins:
+#             bin <sib_bisr_open,sib_mbist_closed>           16          1          -    Covered              
+#             bin <sib_bisr_closed,sib_mbist_closed>          2          1          -    Covered              
+#             bin <*,sib_mbist_open>                          0          1          2    ZERO                 
 # 
-# TOTAL COVERGROUP COVERAGE: 93.75%  COVERGROUP TYPES: 1
+# TOTAL COVERGROUP COVERAGE: 88.88%  COVERGROUP TYPES: 1
 # 
-# Total Coverage By Instance (filtered view): 93.75%
+# Total Coverage By Instance (filtered view): 88.88%
 # 
 # 
 # Saving coverage database on exit...
-# End time: 06:51:49 on Apr 02,2026, Elapsed time: 0:00:02
+# End time: 07:00:36 on Apr 02,2026, Elapsed time: 0:00:03
 # Errors: 0, Warnings: 0
-End time: 06:51:49 on Apr 02,2026, Elapsed time: 0:00:13
+End time: 07:00:36 on Apr 02,2026, Elapsed time: 0:00:17
 *** Summary *********************************************
     qrun: Errors:   0, Warnings:   0
     vlog: Errors:   0, Warnings:   0
