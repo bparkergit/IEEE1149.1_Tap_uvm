@@ -43,18 +43,18 @@
                    expected = model_q.pop_front();
 
                   if ({txn.data_tdo[7:0],txn.data_tdo[15:8]} !== expected[31:16]) 
-                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %0h Got %0h", expected[31:16], txn.data_tdo[15:0]))
+                    `uvm_error("DATA_MISMATCH",$sformatf("Expected %b Got %b", expected[31:16], txn.data_tdo[15:0]))
                   else 
-                    `uvm_info("MATCH",$sformatf("Matched %0h", {txn.data_tdo[7:0],txn.data_tdo[15:8]}), UVM_LOW);
+                    `uvm_info("MATCH",$sformatf("Matched %b", {txn.data_tdo[7:0],txn.data_tdo[15:8]}), UVM_LOW);
              
                 end
           
          
-          if(txn.wr_dr && txn.dr_bits == 16) // hard coded only save non sib writes
+          if(txn.wr_dr && txn.dr_bits > 2) // hard coded only save non sib writes
               if (model_q.size() == DEPTH) 
       			`uvm_error("MODEL_OVERFLOW","Model overflow")
               else begin
-                $display("pushing %0h", txn.data_tdi);
+                $display("pushing %0b", txn.data_tdi);
                 model_q.push_back(txn.data_tdi);
               end
 
