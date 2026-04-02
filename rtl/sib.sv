@@ -4,6 +4,7 @@ module sib #(
     input  logic tck,
     input  logic trst_n,
     input  logic tdi,
+    input  logic tms,
     output logic tdo,
 
     input  logic shift_dr,
@@ -31,7 +32,7 @@ module sib #(
         end else if (capture_dr) begin
             // preload with current enable
             shift_reg <= sib_bit;
-        end else if (shift_dr) begin
+        end else if (shift_dr && !tms) begin
             // shift in TDI (works for WIDTH=1)
           if(WIDTH == 1)
             shift_reg <= tdi;
@@ -53,11 +54,11 @@ module sib #(
     // ---------------------------
     // Pass TDI downstream only when SIB enabled
     // ---------------------------
-    assign child_tdi = sib_bit ? tdi : 1'b0;
+    assign child_tdi = sib_bit ? shift_reg[0] : 1'b0;
 
     // ---------------------------
     // TDO mux
     // ---------------------------
-    assign tdo = sib_bit ? child_tdo : shift_reg;
+  assign tdo = sib_bit ? child_tdo : shift_reg[0];
 
-endmodule
+endmodule 
