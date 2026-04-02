@@ -15,35 +15,35 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
       
       // start the test
       
-      // write IR
+      // write IR (SIB)
       begin
   	 	start_item(item); 
         assert(item.randomize() with {
           wr_ir==1'b1;
           wr_dr==1'b0;
           rd_dr==1'b0;
-          instr==4'b0010; });
+          instr==4'b0011; });
         
         `uvm_info("SEQ", $sformatf("Write IR: instr=%4b", item.instr), UVM_MEDIUM) 
         
     	finish_item(item);
       end
       
-      // write DR
+      // write DR (SIB)
       begin
   	 	start_item(item); 
         assert(item.randomize() with {
           wr_dr==1'b1;
           wr_ir==1'b0;
           rd_dr==1'b0; 
-          dr_bits==2;  // bisr sib in 1st position
-          data_tdi==32'b10; });
+          dr_bits==2; 
+          data_tdi==32'b10; });   // [sib_b], [sib_m]
         
         `uvm_info("SEQ", $sformatf("Write DR: data=%0b", item.data_tdi), UVM_MEDIUM) 
         
     	finish_item(item);
       end  
-
+     
       // write DR
       begin
   	 	start_item(item); 
@@ -51,10 +51,10 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
           wr_dr==1'b1;
           wr_ir==1'b0;
           rd_dr==1'b0; 
-          dr_bits==16;
-          data_tdi==16'hddFF; }); // addr[7:0], data[7:0]
+          dr_bits==18;
+          data_tdi == {1'b1, 8'b00110011, 8'b10101100, 1'b0}; }); // sib_b,addr,data,sib_m
         
-        `uvm_info("SEQ", $sformatf("Write DR: data=%8h", item.data_tdi), UVM_MEDIUM) 
+         `uvm_info("SEQ", $sformatf("Write DR: data=%b", item.data_tdi[17:0]), UVM_MEDIUM) 
         
     	finish_item(item);
       end  
@@ -66,10 +66,41 @@ class bisr_base_sequence extends uvm_sequence #(bisr_seq_item);
           wr_dr==1'b1;
           wr_ir==1'b0;
           rd_dr==1'b1; 
-          dr_bits==16;
-          data_tdi==16'hdd00;}); // addr[7:0], xxxxx
+          dr_bits==18;
+          data_tdi == {1'b1, 8'b00110011, 8'b00000000, 1'b0}; });// sib_b,addr,xxxx,sib_m
         
-        `uvm_info("SEQ", $sformatf("Read DR: data_tdi=%8h", item.data_tdi), UVM_MEDIUM) 
+        `uvm_info("SEQ", $sformatf("Read DR: data_tdi=%b", item.data_tdi[17:0]), UVM_MEDIUM) 
+        
+    	finish_item(item);
+      end 
+      
+      
+      // write DR
+      begin
+  	 	start_item(item); 
+        assert(item.randomize() with {
+          wr_dr==1'b1;
+          wr_ir==1'b0;
+          rd_dr==1'b0; 
+          dr_bits==18;
+          data_tdi == {1'b1, 8'b10100010, 8'b00101100, 1'b0}; }); // sib_b,addr,data,sib_m
+        
+        `uvm_info("SEQ", $sformatf("Write DR: data=%b", item.data_tdi[17:0]), UVM_MEDIUM) 
+        
+    	finish_item(item);
+      end  
+      
+      // read DR
+      begin
+  	 	start_item(item); 
+        assert(item.randomize() with {
+          wr_dr==1'b1;
+          wr_ir==1'b0;
+          rd_dr==1'b1; 
+          dr_bits==18;
+          data_tdi == {1'b1, 8'b10100010, 8'b00000000, 1'b0}; });// sib_b,addr,xxxx,sib_m
+        
+        `uvm_info("SEQ", $sformatf("Read DR: data_tdi=%b", item.data_tdi[17:0]), UVM_MEDIUM) 
         
     	finish_item(item);
       end  
