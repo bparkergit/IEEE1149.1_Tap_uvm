@@ -5,10 +5,12 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
   `uvm_component_utils(bisr_coverage)
 
        covergroup cg_transaction with function sample(
-    bit       wr_ir,
-    bit       wr_dr,
-    bit [7:0] instr = 8'h00, 
-    bit       rd_dr
+    bit       	wr_ir,
+    bit       	wr_dr,
+    bit [7:0] 	instr = 8'h00,
+    bit [31:0] 	data_tdo = 32'h00000000,
+    int			dr_bits,
+    bit       	rd_dr
   );
         coverpoint wr_ir {
           bins low   = {0};
@@ -25,7 +27,32 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
           bins high = {1};
     	}
 
-    	coverpoint instr;
+         coverpoint data_tdo[31] {
+          bins sib_bisr_closed  = {0};
+          bins sib_bisr_open = {1};
+         }
+         
+         coverpoint data_tdo[32-dr_bits] {
+          bins sib_mbist_closed  = {0};
+          bins sib_mbist_open = {1};
+         }
+         
+         data : coverpoint data_tdo[22:15] iff (dr_bits == 18) {
+           bins all_values[] = {[0:$]};  
+        // Alternative: fewer bins for better readability
+        // bins range[16] = {[0:$]};     // distribute into 16 auto bins
+
+    }
+                  
+         addr : coverpoint data_tdo[30:23] iff (dr_bits == 18) {
+      	  bins all_values[] = {[0:$]};     
+        // Alternative: fewer bins for better readability
+        // bins range[16] = {[0:$]};     // distribute into 16 auto bins
+
+    }
+         
+         
+    	 coverpoint instr;
 
  
       endgroup
@@ -42,12 +69,15 @@ class bisr_coverage extends uvm_subscriber #(bisr_seq_item);
     // debug
    // `uvm_info("COV_SAMPLE", $sformatf("Sampling txn: wr_ir=%0b wr_dr=%0b rd_rd=%0b instr=%4b", 
   //                                   t.wr_ir, t.wr_dr, t.rd_dr, t.instr), UVM_MEDIUM)
+  
     // Pass relevant fields to the covergroup's sample function
     cg_transaction.sample(
       .wr_ir   (t.wr_ir),
       .wr_dr   (t.wr_dr),
       .rd_dr (t.rd_dr),
-      .instr (t.instr)
+      .instr (t.instr),
+      .data_tdo (t.data_tdo),
+      .dr_bits (t.dr_bits)
     );
   endfunction
 
