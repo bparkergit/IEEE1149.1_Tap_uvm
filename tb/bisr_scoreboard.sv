@@ -45,7 +45,7 @@
                   if (txn.data_tdo[31:16] !== expected[31:16]) 
                     `uvm_error("DATA_MISMATCH",$sformatf("Expected %b Got %b", expected[31:16], txn.data_tdo[31:16]))
                   else 
-                    `uvm_info("MATCH",$sformatf("Matched %b", txn.data_tdo[31:16]), UVM_LOW);
+                    `uvm_info("MATCH",$sformatf("Matched %h", txn.data_tdo[22:15]), UVM_LOW);
              
                 end
           
