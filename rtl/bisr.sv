@@ -54,7 +54,7 @@ module bisr #(
         .DEPTH(MEM_DEPTH)
     ) mem_inst (
         .clk      (tck),
-      .write_en (latched_update & latched_enable),
+        .write_en (latched_update & latched_enable),
         .addr     (latched_addr),
         .data_in  (latched_data),
         .data_out (mem_data_out)
