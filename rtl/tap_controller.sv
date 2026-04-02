@@ -10,13 +10,6 @@ module tap_controller #(
     output logic [IR_WIDTH-1:0] ir_out,
 
     // DR control signals for each segment
-    output logic shift_dr_bisr,
-    output logic capture_dr_bisr,
-    output logic update_dr_bisr,
-
-    output logic shift_dr_mbist,
-    output logic capture_dr_mbist,
-    output logic update_dr_mbist,
 
     output logic shift_dr_sib,
     output logic capture_dr_sib,
@@ -26,8 +19,6 @@ module tap_controller #(
     input  logic tdo_dr
 );
 
-  localparam IR_BISR = 4'b0010;
-  localparam IR_MBIST = 4'b0100;
   localparam IR_SIB = 4'b0011;  
   
     typedef enum logic [3:0] {
@@ -88,15 +79,7 @@ module tap_controller #(
     // =================================================
     // DR control signals
     // =================================================
-    assign shift_dr_bisr   = (state == SHIFT_DR)  && (ir_active == 4'b0010);
-    assign capture_dr_bisr = (state == CAPTURE_DR)&& (ir_active == 4'b0010);
-    assign update_dr_bisr  = (state == UPDATE_DR) && (ir_active == 4'b0010);
-
-    assign shift_dr_mbist   = (state == SHIFT_DR)  && (ir_active == 4'b0100);
-    assign capture_dr_mbist = (state == CAPTURE_DR)&& (ir_active == 4'b0100);
-    assign update_dr_mbist  = (state == UPDATE_DR) && (ir_active == 4'b0100);
-
-    assign shift_dr_sib   = (state == SHIFT_DR)  && (ir_active == IR_SIB);
+    assign shift_dr_sib = (state == SHIFT_DR)&& (ir_active == IR_SIB);
     assign capture_dr_sib = (state == CAPTURE_DR)&& (ir_active == IR_SIB);
     assign update_dr_sib  = (state == UPDATE_DR) && (ir_active == IR_SIB);
   
@@ -117,8 +100,8 @@ module tap_controller #(
 
     always_comb begin
         case (ir_active)
-            4'b0010: TDO = tdo_dr;    // BISR / memory
-            4'b0100: TDO = tdo_dr;    // MBIST
+            4'b0011: TDO = tdo_dr;    // BISR / memory
+            4'b0010: TDO = tdo_dr;    // MBIST
             default: TDO = bypass_reg;
         endcase
     end
